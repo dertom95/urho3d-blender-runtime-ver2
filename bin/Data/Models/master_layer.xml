@@ -1,0 +1,12 @@
+<animation>
+	<trigger time="0" type="String" value="change_scene_01"/>
+	<trigger time="0.416667" type="String" value="start_animation"/>
+	<trigger time="3.33333" type="String" value="change_scene_02"/>
+	<trigger time="3.95833" type="String" value="start_animation"/>
+	<trigger time="5.54167" type="String" value="change_scene_03"/>
+	<trigger time="6.08333" type="String" value="start_animation"/>
+	<trigger time="8.5" type="String" value="change_scene_04"/>
+	<trigger time="8.83333" type="String" value="start_animation"/>
+	<trigger time="10.4167" type="String" value="fade_out"/>
+	<trigger time="10.9583" type="String" value="change_scene_map"/>
+</animation>

@@ -1,0 +1,38 @@
+<scene id="1">
+	<component id="1" type="Octree"/>
+	<component id="2" type="DebugRenderer"/>
+	<node id="16777216">
+		<attribute name="Name" value="Scene"/>
+		<node id="16777217">
+			<attribute name="Name" value="Cube"/>
+			<attribute name="Position" value="6.92579 9.55849 7.35889"/>
+			<attribute name="Rotation" value="0.780483 0.208704 -0.336872 -0.483536"/>
+			<attribute name="Scale" value="1 1 1"/>
+			<attribute name="Variables"/>
+			<attribute name="Tags">
+				<string value="Collection"/>
+				<string value="Collection_recursive"/>
+			</attribute>
+			<component id="16777216" type="StaticModel">
+				<attribute name="Model" value="Model;Models/Cube.001.mdl"/>
+				<attribute name="Material" value="Material"/>
+			</component>
+		</node>
+		<node id="16777218">
+			<attribute name="Name" value="thecube"/>
+			<attribute name="Position" value="0 0 0"/>
+			<attribute name="Rotation" value="1 -0 -0 -0"/>
+			<attribute name="Scale" value="1 1 1"/>
+			<attribute name="Variables"/>
+			<attribute name="Tags">
+				<string value="thenode"/>
+				<string value="Collection"/>
+				<string value="Collection_recursive"/>
+			</attribute>
+			<component id="16777217" type="StaticModel">
+				<attribute name="Model" value="Model;Models/Cube.002.mdl"/>
+				<attribute name="Material" value="Material;"/>
+			</component>
+		</node>
+	</node>
+</scene>
