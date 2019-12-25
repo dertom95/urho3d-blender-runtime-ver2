@@ -2,6 +2,7 @@
 
 #include <Urho3D/Core/Object.h>
 #include <Urho3D/Scene/Scene.h>
+#include <Urho3D/Graphics/Viewport.h>
 #include <Urho3D/Container/Str.h>
 
 using namespace Urho3D;
@@ -16,8 +17,16 @@ public:
 
     void Setup(VariantMap& engineParameters_);
     void LoadScene(String sceneName);
+    void Start();
 
 private:
-    Scene* scene;
+    void SetupViewport();
+    void SetupScene();
+    void SetupInput();
+
+    Node* mCameraNode;
+    Scene* mScene;
+    Node* mLightNode;
+    Viewport* mViewport;
 
 };

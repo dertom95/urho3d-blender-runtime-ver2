@@ -22,7 +22,7 @@ void TheGameMain::Setup()
 
 void TheGameMain::Start()
 {
-    game_->LoadScene("Scene.xml");
+    game_->Start();
 }
 
 void TheGameMain::Stop()
