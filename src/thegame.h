@@ -4,6 +4,7 @@
 #include <Urho3D/Engine/Application.h>
 
 #include "gamelogic.h"
+#include "LoaderTools/ComponentExporter.h"
 
 using namespace Urho3D;
 
@@ -18,6 +19,9 @@ public:
     void Stop() override;
     void SubscribeToEvents();
     void HandleKeyDown(StringHash eventType, VariantMap& eventData);
+    void ExportComponents(const String& outputPath);
+
 private:
     SharedPtr<GameLogic> game_;
+
 };

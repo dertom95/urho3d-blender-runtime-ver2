@@ -14,19 +14,25 @@ if (COMMAND cmake_policy)
 endif ()
 
 # Set project name
-project (thegame)
+project (worldrunner)
 
 # Set CMake modules search path
 set (CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMake/Modules)
-
 # Include UrhoCommon.cmake module after setting project name
 include (UrhoCommon)
 
 # Define source files
 set (TARGET_NAME ${PROJECT_NAME})
 
-file( GLOB_RECURSE SOURCE_FILES src/*.cpp src/*.h )
+file( GLOB_RECURSE SOURCE_FILES FOLLOW_SYMLINKS src/*.cpp src/*.h )
 
+#SET (SOURCE_FILES
+#    ${SOURCE_FILES}
+#    src/LoaderTools/ComponentExporter.h
+#    src/LoaderTools/ComponentExporter.cpp
+#    src/LoaderTools/base64.h
+#    src/LoaderTools/base64.cpp
+#)
 
 # Setup target with resource copying
 setup_main_executable ()
