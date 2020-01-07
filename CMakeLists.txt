@@ -14,7 +14,7 @@ if (COMMAND cmake_policy)
 endif ()
 
 # Set project name
-project (worldrunner)
+project (minimal-urho3d)
 
 # Set CMake modules search path
 set (CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMake/Modules)

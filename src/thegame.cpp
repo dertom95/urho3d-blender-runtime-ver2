@@ -4,7 +4,7 @@
 #include <Urho3D/Engine/EngineDefs.h>
 #include <Urho3D/Urho3DAll.h>
 
-#include "components.h"
+#include "gameComponents/ComponentsActivator.h"
 
 URHO3D_DEFINE_APPLICATION_MAIN(TheGameMain)
 
@@ -16,21 +16,29 @@ TheGameMain::TheGameMain(Context* ctx) : Application(ctx)
 
 void TheGameMain::Setup()
 {
-    CommonComponents::RegisterComponents(context_);
+    // TODO: needed?
+    FileSystem* fs = GetSubsystem<FileSystem>();
+    auto resourcePath = fs->GetProgramDir() + "Data";
+    auto exists = fs->DirExists(resourcePath);
+
+    ResourceCache* cache=GetSubsystem<ResourceCache>();
+    cache->AddResourceDir(resourcePath);
+    //-------------------------------------------------
+
     context_->RegisterSubsystem(new Urho3DNodeTreeExporter(context_,Urho3DNodeTreeExporter::WhiteList));
     // register game
     game_ = new GameLogic(context_);
     context_->RegisterSubsystem(game_);
     // setup game
     game_->Setup(engineParameters_);
-
+    ComponentsActivator::RegisterComponents(context_);
 }
 
 void TheGameMain::Start()
 {
     game_->Start();
 
-    ExportComponents("worldrunner.json");
+    ExportComponents("minimal-components.json");
 
     // Get default style
     ResourceCache* cache = GetSubsystem<ResourceCache>();
@@ -79,8 +87,6 @@ void TheGameMain::ExportComponents(const String& outputPath)
     exporter->AddSuperComponentHashToFilterList(LogicComponent::GetTypeStatic());
     // explicitly export those components
     exporter->AddComponentHashToFilterList(Light::GetTypeStatic());
-    exporter->AddComponentHashToFilterList(GroupInstance::GetTypeStatic());
-    exporter->AddComponentHashToFilterList(RotationFix::GetTypeStatic());
     exporter->AddComponentHashToFilterList(Camera::GetTypeStatic());
 
     exporter->AddMaterialFolder("Materials");
@@ -101,5 +107,6 @@ void TheGameMain::ExportComponents(const String& outputPath)
     exporter->AddComponentHashToFilterList(AnimationController::GetTypeStatic());
     //exporter->AddComponentHashToFilterList(StaticModel::GetTypeStatic());
 
+    // only export the components (not the materials, which are handled by the urho-sceneloader)
     exporter->Export(outputPath,true,false);
 }
