@@ -56,3 +56,37 @@ void Rotator::Update(float timeStep)
     // do the logic here
 
 }
+
+
+
+Rotator2::Rotator2(Context* context) :
+    LogicComponent(context),
+    speed_(DEFAULT_ROTATOR_SPEED)
+{
+    // Only the physics update event is needed: unsubscribe from the rest for optimization
+    SetUpdateEventMask(USE_UPDATE);
+}
+
+void Rotator2::RegisterObject(Context* context)
+{
+    context->RegisterFactory<Rotator2>("Sample Component");
+
+    // These macros register the class attributes to the Context for automatic load / save handling.
+    // We specify the Default attribute mode which means it will be used both for saving into file, and network replication
+    URHO3D_ATTRIBUTE("Axis", Vector3, axis_ , Vector3::ZERO, AM_FILE);
+    URHO3D_ATTRIBUTE("Speed", float, speed_, DEFAULT_ROTATOR_SPEED, AM_FILE);
+}
+
+void Rotator2::DelayedStart()
+{
+    // init whatever you want. at this point all nodes are already handled
+    URHO3D_LOGINFO("STARTED");
+    int a=0;
+}
+
+void Rotator2::Update(float timeStep)
+{
+    node_->Rotate(Quaternion(axis_.x_*speed_*timeStep,axis_.y_*speed_*timeStep,axis_.z_*speed_*timeStep));
+    // do the logic here
+
+}

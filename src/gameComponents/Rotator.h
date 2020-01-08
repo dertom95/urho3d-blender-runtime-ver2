@@ -52,3 +52,26 @@ private:
     float speed_;
     Vector3 axis_;
 };
+
+/// Rotator component, responsible for physical movement according to controls, as well as animation.
+class Rotator2 : public LogicComponent
+{
+    URHO3D_OBJECT(Rotator2, LogicComponent);
+
+public:
+    /// Construct.
+    explicit Rotator2(Context* context);
+
+    /// Register object factory and attributes.
+    static void RegisterObject(Context* context);
+
+    /// Handle startup. Called by LogicComponent base class.
+    void DelayedStart() override;
+
+    /// Handle physics world update. Called by LogicComponent base class.
+    void Update(float timeStep) override;
+
+private:
+    float speed_;
+    Vector3 axis_;
+};

@@ -70,6 +70,26 @@
 			</component>
 		</node>
 		<node id="16777220">
+			<attribute name="Name" value="Cube.002"/>
+			<attribute name="Position" value="2.14012 0 -7.32531e-08"/>
+			<attribute name="Rotation" value="1 -0 -0 -0"/>
+			<attribute name="Scale" value="1 1 1"/>
+			<attribute name="Variables"/>
+			<attribute name="Tags">
+				<string value="Collection"/>
+				<string value="Collection_recursive"/>
+			</attribute>
+			<component id="16777230" type="StaticModel">
+				<attribute name="Model" value="Model;Models/Cube.002.mdl"/>
+				<attribute name="Material" value="Material;Materials/DefaultOrange.xml"/>
+				<attribute name="Cast Shadows" value="true"/>
+			</component>
+			<component id="16777232" type="Rotator">
+				<attribute name="Axis" value="1.0 2.0 3.0"/>
+				<attribute name="Speed" value="3.0"/>
+			</component>
+		</node>
+		<node id="16777221">
 			<attribute name="Name" value="Light"/>
 			<attribute name="Position" value="-1.00545 5.90386 4.07625"/>
 			<attribute name="Rotation" value="0.950163 -1.06709e-08 -0 -0.311754"/>
@@ -79,8 +99,8 @@
 				<string value="Collection"/>
 				<string value="Collection_recursive"/>
 			</attribute>
-			<component id="16777231" type="RotationFix"/>
-			<component id="16777233" type="Light">
+			<component id="16777233" type="RotationFix"/>
+			<component id="16777235" type="Light">
 				<attribute name="Is Enabled" value="true"/>
 				<attribute name="Light Type" value="Directional"/>
 				<attribute name="Specular Intensity" value="1.0"/>

@@ -17,8 +17,9 @@ void ComponentsActivator::RegisterComponents(Context *context)
     // mandataory for some exporter features
     ParentBone::RegisterObject(context);
     GroupInstance::RegisterObject(context);
-    Rotator::RegisterObject(context);
+    RotationFix::RegisterObject(context);
 
     // custom components
-    RotationFix::RegisterObject(context);
+    Rotator::RegisterObject(context);
+   // Rotator2::RegisterObject(context);
 }
