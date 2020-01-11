@@ -5,7 +5,7 @@
 #include <Urho3D/Engine/Engine.h>
 #include <Urho3D/Engine/Application.h>
 
-#include "Gamelogic.h"
+#include "GameLogic.h"
 
 #ifdef ENABLE_COMPONENT_EXPORTER
  #include "Subsystems/LoaderTools/ComponentExporter.h"

@@ -25,15 +25,24 @@ include (UrhoCommon)
 set (TARGET_NAME ${PROJECT_NAME})
 set (URHO3D_PACKAGING 1)
 
-file( GLOB_RECURSE SOURCE_FILES FOLLOW_SYMLINKS src/*.cpp src/*.h )
+# options
+option(ENABLE_COMPONENT_EXPORTER "Enable Component-Export as JSON" ON)
 
-#SET (SOURCE_FILES
-#    ${SOURCE_FILES}
-#    src/LoaderTools/ComponentExporter.h
-#    src/LoaderTools/ComponentExporter.cpp
-#    src/LoaderTools/base64.h
-#    src/LoaderTools/base64.cpp
-#)
+# get all source files
+file( GLOB_RECURSE SOURCE_FILES FOLLOW_SYMLINKS ${CMAKE_CURRENT_SOURCE_DIR} src/*.cpp src/*.h )
+
+# create configure file
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/CMake/project_options.h.in ${CMAKE_CURRENT_SOURCE_DIR}/src/Generated/project_options.h @ONLY)
+
+set(INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src/Generated)
+
+list(APPEND ${SOURCE_FILES} ${CMAKE_CURRENT_BINARY_DIR}/project_options.h)
+
+message("created: ${CMAKE_CURRENT_BINARY_DIR}/project_options.h")
+message("All Sources: ${SOURCE_FILES}")
+
+# this is due to a problem of qtcreator grouping the files awkwardly since qtcreator 4.11 (nothing mandatory. remove if wanted)
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCE_FILES})
 
 # Setup target with resource copying
 setup_main_executable ()
