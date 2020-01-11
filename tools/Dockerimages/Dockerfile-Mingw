@@ -1,0 +1,9 @@
+FROM urho3d/dockerized-mingw:master
+
+RUN git clone https://github.com/urho3D/Urho3D.git --depth=1 
+RUN cd /Urho3D && /mingw_entrypoint.sh rake cmake mingw URHO3D_SAMPLES=0 URHO3D_TOOLS=0 URHO3D_HASH_DEBUG=0 URHO3D_PROFILING=0 URHO3D_TESTING=0 URHO3D_DEPLOYMENT_TARGET=generic 
+RUN cd /Urho3D && /mingw_entrypoint.sh rake make mingw -j $(nproc)
+
+ENV URHO3D_HOME=/Urho3D/build/mingw
+
+ADD PackageTool /Urho3D/build/mingw/bin/tool

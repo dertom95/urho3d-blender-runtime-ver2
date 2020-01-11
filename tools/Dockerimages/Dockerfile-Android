@@ -36,3 +36,6 @@ ADD android/settings.gradle.kts /Urho3D
 ADD android/root_entrypoint.sh /
 
 ENTRYPOINT ["/root_entrypoint.sh","/android_entrypoint.sh"]
+
+CMD ["./gradlew", "-p", "ANDROID_ABI=armeabi-v7a", "build"]
+
