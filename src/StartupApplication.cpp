@@ -16,15 +16,13 @@ StartupApplication::StartupApplication(Context* ctx) : Application(ctx)
 
 void StartupApplication::Setup()
 {
-    // TODO: needed?
     FileSystem* fs = GetSubsystem<FileSystem>();
     auto resourcePath = fs->GetProgramDir() + "Data";
-    auto exists = fs->DirExists(resourcePath);
 
     ResourceCache* cache=GetSubsystem<ResourceCache>();
     cache->AddResourceDir(resourcePath);
-    //-------------------------------------------------
 
+    SetupComponentExporter();
     // register game
     game_ = new GameLogic(context_);
     context_->RegisterSubsystem(game_);
