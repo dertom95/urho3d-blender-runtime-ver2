@@ -13,8 +13,8 @@
 		</component>
 		<node id="16777217">
 			<attribute name="Name" value="Camera"/>
-			<attribute name="Position" value="6.92579 4.95831 7.35889"/>
-			<attribute name="Rotation" value="0.780483 0.208704 -0.336872 -0.483536"/>
+			<attribute name="Position" value="-1.2292 23.7745 -0.263399"/>
+			<attribute name="Rotation" value="1 -0 -0 -0"/>
 			<attribute name="Scale" value="1 1 1"/>
 			<attribute name="Variables"/>
 			<attribute name="Tags">
@@ -31,9 +31,9 @@
 		</node>
 		<node id="16777218">
 			<attribute name="Name" value="Cube"/>
-			<attribute name="Position" value="0 0 0"/>
+			<attribute name="Position" value="-1.21402 0 -3.64205"/>
 			<attribute name="Rotation" value="1 -0 -0 -0"/>
-			<attribute name="Scale" value="1 1 1"/>
+			<attribute name="Scale" value="3.32959 3.32959 3.32959"/>
 			<attribute name="Variables"/>
 			<attribute name="Tags">
 				<string value="Collection"/>
@@ -51,9 +51,9 @@
 		</node>
 		<node id="16777219">
 			<attribute name="Name" value="Cube.001"/>
-			<attribute name="Position" value="0 0 0"/>
+			<attribute name="Position" value="-1.21402 0 -3.64205"/>
 			<attribute name="Rotation" value="1 -0 -0 -0"/>
-			<attribute name="Scale" value="1 1 1"/>
+			<attribute name="Scale" value="3.32959 3.32959 3.32959"/>
 			<attribute name="Variables"/>
 			<attribute name="Tags">
 				<string value="Collection"/>
@@ -71,9 +71,9 @@
 		</node>
 		<node id="16777220">
 			<attribute name="Name" value="Cube.002"/>
-			<attribute name="Position" value="2.14012 0 -7.32531e-08"/>
+			<attribute name="Position" value="-0.861817 0 2.07487"/>
 			<attribute name="Rotation" value="1 -0 -0 -0"/>
-			<attribute name="Scale" value="1 1 1"/>
+			<attribute name="Scale" value="5.61751 5.61751 5.61751"/>
 			<attribute name="Variables"/>
 			<attribute name="Tags">
 				<string value="Collection"/>
@@ -81,7 +81,7 @@
 			</attribute>
 			<component id="16777230" type="StaticModel">
 				<attribute name="Model" value="Model;Models/Cube.002.mdl"/>
-				<attribute name="Material" value="Material;Materials/DefaultOrange.xml"/>
+				<attribute name="Material" value="Material;Materials/Orange-Vcol.001.xml"/>
 				<attribute name="Cast Shadows" value="true"/>
 			</component>
 			<component id="16777232" type="Rotator">
@@ -90,6 +90,22 @@
 			</component>
 		</node>
 		<node id="16777221">
+			<attribute name="Name" value="Cube.003"/>
+			<attribute name="Position" value="-4 6 5"/>
+			<attribute name="Rotation" value="0.707107 -2.42032e-08 -0 -0.707107"/>
+			<attribute name="Scale" value="1 1 1"/>
+			<attribute name="Variables"/>
+			<attribute name="Tags">
+				<string value="Collection"/>
+				<string value="Collection_recursive"/>
+			</attribute>
+			<component id="16777232" type="StaticModel">
+				<attribute name="Model" value="Model;Models/Cube.003.mdl"/>
+				<attribute name="Material" value="Material;Materials/Orange-Vcol.001.xml"/>
+				<attribute name="Cast Shadows" value="true"/>
+			</component>
+		</node>
+		<node id="16777222">
 			<attribute name="Name" value="Light"/>
 			<attribute name="Position" value="-1.00545 5.90386 4.07625"/>
 			<attribute name="Rotation" value="0.950163 -1.06709e-08 -0 -0.311754"/>
@@ -99,8 +115,8 @@
 				<string value="Collection"/>
 				<string value="Collection_recursive"/>
 			</attribute>
-			<component id="16777233" type="RotationFix"/>
-			<component id="16777235" type="Light">
+			<component id="16777234" type="RotationFix"/>
+			<component id="16777236" type="Light">
 				<attribute name="Is Enabled" value="true"/>
 				<attribute name="Light Type" value="Directional"/>
 				<attribute name="Specular Intensity" value="1.0"/>

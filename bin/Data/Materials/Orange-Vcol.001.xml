@@ -1,0 +1,6 @@
+<material>
+	<cull value="ccw"/>
+	<shadowcull value="ccw"/>
+	<fill value="solid"/>
+	<technique loddistance="0" name="Techniques/NoTextureVCol.xml" quality="0"/>
+</material>

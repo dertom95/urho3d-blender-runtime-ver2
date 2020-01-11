@@ -17,12 +17,13 @@ endif ()
 project (minimal-urho3d)
 
 # Set CMake modules search path
-set (CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMake/Modules)
+set (CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMake/Modules)
 # Include UrhoCommon.cmake module after setting project name
 include (UrhoCommon)
 
 # Define source files
 set (TARGET_NAME ${PROJECT_NAME})
+set (URHO3D_PACKAGING 1)
 
 file( GLOB_RECURSE SOURCE_FILES FOLLOW_SYMLINKS src/*.cpp src/*.h )
 

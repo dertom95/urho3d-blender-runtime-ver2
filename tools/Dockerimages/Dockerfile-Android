@@ -1,0 +1,38 @@
+FROM urho3d/dockerized-android:master as builder
+
+RUN apt-get update 
+RUN apt-get install -y apt-transport-https ca-certificates gnupg software-properties-common wget 
+RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | sudo apt-key add - 
+RUN apt-add-repository -y 'deb https://apt.kitware.com/ubuntu/ bionic main'
+RUN apt-get update 
+RUN apt-get install -y cmake
+
+RUN apt-get install -y ninja-build
+
+RUN git clone https://github.com/urho3D/Urho3D.git --depth=1 
+
+RUN cd /Urho3D && ./gradlew build
+
+RUN mkdir -p /Urho3D/build/android && \
+    cd /Urho3D/build/android &&\ 
+    cp -r -L /Urho3D/android/urho3d-lib/build/tree/Release . && \
+    cp -r -L /Urho3D/android/urho3d-lib/build/tree/Debug . && \
+    chown -R 1000:1000 .
+
+FROM urho3d/dockerized-android:master
+
+RUN git clone https://github.com/urho3D/Urho3D.git --depth=1
+
+RUN chown -R 1000:1000  /Urho3D && mkdir -p /Urho3D/build
+
+COPY --from=builder /Urho3D/build/android /Urho3D/build/android
+COPY --from=builder /root/.gradle /root/.gradle
+
+ENV URHO3D_HOME=/Urho3D/build/android/Release/armeabi-v7a
+
+RUN cd /Urho3D && ./gradlew tasks
+
+ADD android/settings.gradle.kts /Urho3D
+ADD android/root_entrypoint.sh /
+
+ENTRYPOINT ["/root_entrypoint.sh","/android_entrypoint.sh"]

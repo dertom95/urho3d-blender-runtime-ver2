@@ -21,7 +21,7 @@
 # THE SOFTWARE.
 #
 
-if [[ $# -eq 0 ]]; then echo "Usage: dockerized.sh native|mingw|android|web not:rpi|arm [command [params]]"; exit 1; fi
+if [[ $# -eq 0 ]]; then echo "Usage: dockerized.sh native|mingw|android|rpi|arm|web [command [params]]"; exit 1; fi
 
 PROJECT_DIR=$(cd "${0%/*}/.." || exit 1; pwd)
 
@@ -38,29 +38,24 @@ if [[ $TRAVIS ]]; then while (! docker pull "urho3d/dockerized$BuildEnvironment:
 
 # shellcheck disable=SC1083
 if [[ $(docker version -f {{.Client.Version}}) =~ ^([0-9]+)\.0*([0-9]+)\. ]] && (( BASH_REMATCH[1] * 100 + BASH_REMATCH[2] >= 1809 )); then
-echo     docker run -it --rm -h fishtank \
-        -e HOST_UID="$(id -u)" -e HOST_GID="$(id -g)" -e PROJECT_DIR="$PROJECT_DIR" $NEW_URHO3D_HOME \
-        --mount type=bind,source="$PROJECT_DIR",target="$PROJECT_DIR" \
-        -v $PROJECT_DIR/android/launcher-app:/Urho3D/android/launcher-app \
-        --name "dockerized$BuildEnvironment" \
-        "dertom95/urho3d$BuildEnvironment:$DBE_TAG" "$@"
-
-    	docker run -it --rm -h fishtank \
-        -e HOST_UID="$(id -u)" -e HOST_GID="$(id -g)" -e PROJECT_DIR="$PROJECT_DIR" $NEW_URHO3D_HOME \
-        --mount type=bind,source="$PROJECT_DIR",target="$PROJECT_DIR" \
-        -v $PROJECT_DIR/android/launcher-app:/Urho3D/android/launcher-app \
-	--name "dockerized$BuildEnvironment" \
-        "dertom95/urho3d$BuildEnvironment:$DBE_TAG" "$@"
-else
-    echo "CAUTION: UNTESTED"
-    echo "CAUTION: UNTESTED"
-    # Fallback workaround on older Docker CLI version
+    echo "Type1 $DBE_TAG"
     docker run -it --rm -h fishtank \
         -e HOST_UID="$(id -u)" -e HOST_GID="$(id -g)" -e PROJECT_DIR="$PROJECT_DIR" \
+        --env-file "$PROJECT_DIR/script/.env-file" \
         --mount type=bind,source="$PROJECT_DIR",target="$PROJECT_DIR" \
-        -v $PROJECT_DIR/android/launcher-app:/Urho3D/android/launcher-app \
-	--name "dockerized$BuildEnvironment" \
-        "dertom95/urho3d$BuildEnvironment:$DBE_TAG" "$@"
+        --mount source="$(id -u).urho3d_home_dir",target=/home/urho3d \
+        --name "dockerized$BuildEnvironment" \
+        "urho3d/dockerized$BuildEnvironment:$DBE_TAG" "$@"
+else
+    echo "TYPE2"
+    	# Fallback workaround on older Docker CLI version
+    docker run -it --rm -h fishtank \
+        -e HOST_UID="$(id -u)" -e HOST_GID="$(id -g)" -e PROJECT_DIR="$PROJECT_DIR" \
+        --env-file <(perl -ne 'chomp; print "$_\n" if defined $ENV{$_}' "$PROJECT_DIR/script/.env-file") \
+        --mount type=bind,source="$PROJECT_DIR",target="$PROJECT_DIR" \
+        --mount source="$(id -u).urho3d_home_dir",target=/home/urho3d \
+        --name "dockerized$BuildEnvironment" \
+        "urho3d/dockerized$BuildEnvironment:$DBE_TAG" "$@"
 fi
 
 # vi: set ts=4 sw=4 expandtab:
