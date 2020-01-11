@@ -8,3 +8,8 @@ ENV URHO3D_HOME=/Urho3D/build/web
 
 ADD PackageTool /Urho3D/build/web/bin/tool
 
+# build once the minimal-project in order to create the emcc system library (otherwise thise would be done on every compile afterwards)
+RUN git clone https://github.com/dertom95/urho3d-minimal-new-project.git tempProject
+RUN cd /tempProject && rake cmake web
+RUN cd /tempProject && rake make web -j $(nproc)
+RUN rm -Rf /tempProject
