@@ -34,6 +34,8 @@ BuildEnvironment=-$1; shift
 BuildEnvironment=${BuildEnvironment/-base}
 echo 3
 
+sudo docker pull dertom95/urho3d$BuildEnvironment:$DBE_TAG
+
 # shellcheck disable=SC1083
 if [[ $(sudo docker version -f {{.Client.Version}}) =~ ^([0-9]+)\.0*([0-9]+)\. ]] && (( BASH_REMATCH[1] * 100 + BASH_REMATCH[2] >= 1809 )); then
 echo 4
