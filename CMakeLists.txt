@@ -19,12 +19,14 @@ project (minimal-urho3d)
 # Set CMake modules search path
 set (CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMake/Modules)
 # Include UrhoCommon.cmake module after setting project name
+
+set (URHO3D_PACKAGING 1 CACHE BOOL "")
+set (URHO3D_DEPLOYMENT_TARGET generic CACHE STRING "") # it is important to set this before running thorugh UrhoCommon
+
 include (UrhoCommon)
 
 # Define source files
 set (TARGET_NAME ${PROJECT_NAME})
-set (URHO3D_PACKAGING 1)
-
 # options
 option(ENABLE_COMPONENT_EXPORTER "Enable Component-Export as JSON" ON)
 

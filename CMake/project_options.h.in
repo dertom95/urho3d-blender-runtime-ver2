@@ -1,1 +1,2 @@
 #cmakedefine ENABLE_COMPONENT_EXPORTER
+#cmakedefine PROJECT_NAME "@PROJECT_NAME@"

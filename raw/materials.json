@@ -228,6 +228,27 @@
 									"number": "6307461"
 								},
 								{
+									"id": "Model;Models/Cube.003.mdl",
+									"name": "Models/Cube.003.mdl",
+									"description": "Model Models/Cube.003.mdl",
+									"icon": "MESH",
+									"number": "5871750"
+								},
+								{
+									"id": "Model;Models/Cube.004.mdl",
+									"name": "Models/Cube.004.mdl",
+									"description": "Model Models/Cube.004.mdl",
+									"icon": "MESH",
+									"number": "5436039"
+								},
+								{
+									"id": "Model;Models/Cube.006.mdl",
+									"name": "Models/Cube.006.mdl",
+									"description": "Model Models/Cube.006.mdl",
+									"icon": "MESH",
+									"number": "9597321"
+								},
+								{
 									"id": "Model;Models/Cube.mdl",
 									"name": "Models/Cube.mdl",
 									"description": "Model Models/Cube.mdl",
@@ -261,6 +282,41 @@
 									"description": "Model Models/Editor/ScaleAxes.mdl",
 									"icon": "MESH",
 									"number": "7134937"
+								},
+								{
+									"id": "Model;Models/Plane.mdl",
+									"name": "Models/Plane.mdl",
+									"description": "Model Models/Plane.mdl",
+									"icon": "MESH",
+									"number": "7543166"
+								},
+								{
+									"id": "Model;Models/Suzanne.001.mdl",
+									"name": "Models/Suzanne.001.mdl",
+									"description": "Model Models/Suzanne.001.mdl",
+									"icon": "MESH",
+									"number": "9978401"
+								},
+								{
+									"id": "Model;Models/Suzanne.002.mdl",
+									"name": "Models/Suzanne.002.mdl",
+									"description": "Model Models/Suzanne.002.mdl",
+									"icon": "MESH",
+									"number": "9542690"
+								},
+								{
+									"id": "Model;Models/Suzanne.003.mdl",
+									"name": "Models/Suzanne.003.mdl",
+									"description": "Model Models/Suzanne.003.mdl",
+									"icon": "MESH",
+									"number": "9106979"
+								},
+								{
+									"id": "Model;Models/Suzanne.mdl",
+									"name": "Models/Suzanne.mdl",
+									"description": "Model Models/Suzanne.mdl",
+									"icon": "MESH",
+									"number": "5343006"
 								}
 							],
 							"default": "0",
@@ -1952,6 +2008,27 @@
 									"number": "6307461"
 								},
 								{
+									"id": "Model;Models/Cube.003.mdl",
+									"name": "Models/Cube.003.mdl",
+									"description": "Model Models/Cube.003.mdl",
+									"icon": "MESH",
+									"number": "5871750"
+								},
+								{
+									"id": "Model;Models/Cube.004.mdl",
+									"name": "Models/Cube.004.mdl",
+									"description": "Model Models/Cube.004.mdl",
+									"icon": "MESH",
+									"number": "5436039"
+								},
+								{
+									"id": "Model;Models/Cube.006.mdl",
+									"name": "Models/Cube.006.mdl",
+									"description": "Model Models/Cube.006.mdl",
+									"icon": "MESH",
+									"number": "9597321"
+								},
+								{
 									"id": "Model;Models/Cube.mdl",
 									"name": "Models/Cube.mdl",
 									"description": "Model Models/Cube.mdl",
@@ -1985,6 +2062,41 @@
 									"description": "Model Models/Editor/ScaleAxes.mdl",
 									"icon": "MESH",
 									"number": "7134937"
+								},
+								{
+									"id": "Model;Models/Plane.mdl",
+									"name": "Models/Plane.mdl",
+									"description": "Model Models/Plane.mdl",
+									"icon": "MESH",
+									"number": "7543166"
+								},
+								{
+									"id": "Model;Models/Suzanne.001.mdl",
+									"name": "Models/Suzanne.001.mdl",
+									"description": "Model Models/Suzanne.001.mdl",
+									"icon": "MESH",
+									"number": "9978401"
+								},
+								{
+									"id": "Model;Models/Suzanne.002.mdl",
+									"name": "Models/Suzanne.002.mdl",
+									"description": "Model Models/Suzanne.002.mdl",
+									"icon": "MESH",
+									"number": "9542690"
+								},
+								{
+									"id": "Model;Models/Suzanne.003.mdl",
+									"name": "Models/Suzanne.003.mdl",
+									"description": "Model Models/Suzanne.003.mdl",
+									"icon": "MESH",
+									"number": "9106979"
+								},
+								{
+									"id": "Model;Models/Suzanne.mdl",
+									"name": "Models/Suzanne.mdl",
+									"description": "Model Models/Suzanne.mdl",
+									"icon": "MESH",
+									"number": "5343006"
 								}
 							],
 							"default": "0",
@@ -2329,6 +2441,13 @@
 									"description": "Material Materials/Editor/TexturedUnlit.xml",
 									"icon": "MATERIAL",
 									"number": "2763999"
+								},
+								{
+									"id": "Materials/Orange-Vcol.001.xml",
+									"name": "Materials/Orange-Vcol.001.xml",
+									"description": "Material Materials/Orange-Vcol.001.xml",
+									"icon": "MATERIAL",
+									"number": "9168210"
 								},
 								{
 									"id": "Materials/VColUnlit.xml",

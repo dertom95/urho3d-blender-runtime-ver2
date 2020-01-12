@@ -56,6 +56,9 @@ void GameLogic::SetupScene()
 
 void GameLogic::SetupInput()
 {
+    Input* input = GetSubsystem<Input>();
+    input->SetMouseMode(MM_FREE);
+    input->SetMouseVisible(true);
 }
 
 void GameLogic::SetupViewport()
@@ -94,7 +97,7 @@ void GameLogic::HandleUpdate(StringHash eventType, VariantMap &eventData)
 
     Input* input = GetSubsystem<Input>();
 
-    input->SetMouseVisible(input->GetMouseButtonDown(MOUSEB_RIGHT));
+    input->SetMouseVisible(!input->GetMouseButtonDown(MOUSEB_RIGHT));
 
     if (input->GetKeyPress(KEY_F3)){
         mRenderPhysics = !mRenderPhysics;

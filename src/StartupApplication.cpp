@@ -36,8 +36,8 @@ void StartupApplication::Start()
     game_->Start();
 
 #ifdef ENABLE_COMPONENT_EXPORTER
-    // export registered
-    ExportComponents("minimal-components.json");
+    // export registered components
+    ExportComponents(String(PROJECT_NAME)+"_components.json");
 #endif
 
     // Get default style
