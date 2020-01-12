@@ -1648,7 +1648,13 @@ void FadeUI(bool fade = true)
 
 bool ToggleUI()
 {
-    HideUI(!uiHidden);
+    bool hide = !uiHidden;
+    HideUI(hide);
+    log.Info("hide:"+hide);
+    VariantMap vm;
+    vm["P_EDITOR_HIDDEN"] = hide;
+    SendEvent("E_EDITOR_TOGGLE", vm);
+
     return true;
 }
 

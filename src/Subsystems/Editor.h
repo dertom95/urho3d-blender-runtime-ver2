@@ -25,7 +25,11 @@ private:
     /// Handle reload failure of the script file.
     void HandleScriptReloadFailed(StringHash eventType, VariantMap& eventData);
 
+    /// Handle events sends by the editor
+    void HandleEditorEvents(StringHash eventType, VariantMap& eventData);
+
     bool initialized_;
     SharedPtr<ScriptFile> scriptFile_;
 
+    PODVector<Viewport*> editorViewports_;
 };

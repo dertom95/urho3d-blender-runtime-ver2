@@ -54,8 +54,6 @@ private:
 
     bool mRenderPhysics;
 
-    Editor* mEditor;
-
     SharedPtr<Window> window_;
     /// The UI's root UIElement.
     SharedPtr<UIElement> uiRoot_;

@@ -8,8 +8,7 @@ GameLogic::GameLogic(Context* ctx)
       mCameraNode(nullptr),
       mScene(nullptr),
       mViewport(nullptr),
-      mRenderPhysics(false),
-      mEditor(nullptr)
+      mRenderPhysics(false)
 {
 }
 
@@ -41,7 +40,6 @@ void GameLogic::SetupSystems()
 void GameLogic::SetupScene()
 {
     mScene = new Scene(context_);
-
     context_->RegisterSubsystem( mScene );
 
     // Create scene subsystem components
@@ -66,6 +64,7 @@ void GameLogic::SetupViewport()
     Renderer* renderer = GetSubsystem<Renderer>();
     mViewport = new Viewport(context_, mScene, mCameraNode->GetComponent<Camera>());
     renderer->SetViewport(0,mViewport);
+    context_->RegisterSubsystem(mViewport);
 }
 
 void GameLogic::LoadFromFile(String sceneName, Node* loadInto)
@@ -119,9 +118,11 @@ void GameLogic::HandleInput(StringHash eventType, VariantMap &eventData)
     int key = eventData[P_KEY].GetInt();
 
     if (key == KEY_F12){
-        if (!mEditor){
-            mEditor = new Editor(context_);
-            mEditor->InitEditor();
+        Editor* editor = GetSubsystem<Editor>();
+        if (!editor){
+            editor = new Editor(context_);
+            editor->InitEditor();
+            context_->RegisterSubsystem(editor);
         }
     }
 
@@ -231,7 +232,7 @@ void GameLogic::HandleConsoleInput(StringHash eventType, VariantMap& eventData)
     String command = eventData[P_COMMAND].GetString();
     String id = eventData[P_ID].GetString();
 
-    if (command == "GIT_VERSION"){
+    if (command == "GIT_HASH"){
         URHO3D_LOGINFOF("GIT-Hash: %s",String(GIT_HASH).CString());
     }
 }

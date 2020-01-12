@@ -49,6 +49,7 @@ void StartupApplication::Start()
     Console* console = engine_->CreateConsole();
     console->SetDefaultStyle(xmlFile);
     console->GetBackground()->SetOpacity(0.8f);
+    console->SetNumBufferedRows(512);
 
     // Create debug HUD.
     DebugHud* debugHud = engine_->CreateDebugHud();
@@ -84,8 +85,8 @@ void StartupApplication::HandleKeyDown(StringHash eventType, VariantMap& eventDa
         Console* console = GetSubsystem<Console>();
         console->Toggle();
     }
-
 #endif
+
 }
 
 #ifdef GAME_ENABLE_COMPONENT_EXPORTER

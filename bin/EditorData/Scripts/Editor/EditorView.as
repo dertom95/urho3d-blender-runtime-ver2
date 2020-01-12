@@ -1606,6 +1606,8 @@ void CameraZoom(float zoom)
 
 void HandleStandardUserInput(float timeStep)
 {
+    if (uiHidden) return;
+
     // Speedup camera move if Shift key is down
     float speedMultiplier = 1.0;
     if (input.keyDown[KEY_LSHIFT])
@@ -1967,6 +1969,8 @@ void HandleBlenderUserInput(float timeStep)
 
 void UpdateView(float timeStep)
 {
+    if (uiHidden) return;
+    
     if (ui.HasModalElement() || ui.focusElement !is null)
     {
         ReleaseMouseLock();
