@@ -1,6 +1,6 @@
 #include "ComponentExporter.h"
 
-#ifdef ENABLE_COMPONENT_EXPORTER
+#ifdef GAME_ENABLE_COMPONENT_EXPORTER
 
 #include "base64.h"
 #include <Urho3D/Container/Sort.h>

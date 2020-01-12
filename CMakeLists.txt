@@ -16,6 +16,9 @@ endif ()
 # Set project name
 project (minimal-urho3d)
 
+
+
+
 # Set CMake modules search path
 set (CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMake/Modules)
 # Include UrhoCommon.cmake module after setting project name
@@ -28,7 +31,29 @@ include (UrhoCommon)
 # Define source files
 set (TARGET_NAME ${PROJECT_NAME})
 # options
-option(ENABLE_COMPONENT_EXPORTER "Enable Component-Export as JSON" ON)
+option(GAME_ENABLE_DEBUG_TOOLS "Enable Debug-Tools(Editor,Console,Profiler)" ON)
+option(GAME_ENABLE_COMPONENT_EXPORTER "Enable Component-Export as JSON" ON)
+option(GAME_RETRIEVE_GIT_HASH "Retrieve current-githash" ON)
+
+set(GIT_HASH "unknown")
+
+if (GAME_RETRIEVE_GIT_HASH)
+    ## see: https://coderefinery.github.io/cmake/07-exercise/
+
+    # find Git and if available set GIT_HASH variable
+    find_package(Git QUIET)
+    if(GIT_FOUND)
+      execute_process(
+        COMMAND ${GIT_EXECUTABLE} --no-pager show -s --pretty=format:%h -n 1
+        OUTPUT_VARIABLE GIT_HASH
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+        WORKING_DIRECTORY
+            ${PROJECT_SOURCE_DIR}
+        ERROR_QUIET
+        )
+    endif()
+endif()
+
 
 # get all source files
 file( GLOB_RECURSE SOURCE_FILES FOLLOW_SYMLINKS ${CMAKE_CURRENT_SOURCE_DIR} src/*.cpp src/*.h )

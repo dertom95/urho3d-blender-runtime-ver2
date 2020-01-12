@@ -88,6 +88,9 @@ void GameLogic::SubscribeToEvents()
     SubscribeToEvent(E_UPDATE, URHO3D_HANDLER(GameLogic, HandleUpdate));
     SubscribeToEvent(E_POSTRENDERUPDATE, URHO3D_HANDLER(GameLogic, HandlePostRenderUpdate));
     SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(GameLogic, HandleInput));
+#ifdef GAME_ENABLE_DEBUG_TOOLS
+    SubscribeToEvent(E_CONSOLECOMMAND, URHO3D_HANDLER(GameLogic, HandleConsoleInput));
+#endif
 }
 
 void GameLogic::HandleUpdate(StringHash eventType, VariantMap &eventData)
@@ -221,8 +224,22 @@ void GameLogic::HandleControlClicked(StringHash eventType, VariantMap& eventData
     windowTitle->SetText("Hello " + name + "!");
 }
 
+#ifdef GAME_ENABLE_DEBUG_TOOLS
+void GameLogic::HandleConsoleInput(StringHash eventType, VariantMap& eventData)
+{
+    using namespace ConsoleCommand;
+    String command = eventData[P_COMMAND].GetString();
+    String id = eventData[P_ID].GetString();
+
+    if (command == "GIT_VERSION"){
+        URHO3D_LOGINFOF("GIT-Hash: %s",String(GIT_HASH).CString());
+    }
+}
+#endif
+
 void GameLogic::SetUIText(String text)
 {
     auto* windowTitle = window_->GetChildStaticCast<Text>("WindowTitle", true);
     windowTitle->SetText(text);
 }
+

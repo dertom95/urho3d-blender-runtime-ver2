@@ -2,7 +2,7 @@
 
 #include <project_options.h>
 
-#ifdef ENABLE_COMPONENT_EXPORTER
+#ifdef GAME_ENABLE_COMPONENT_EXPORTER
 
 #include <Urho3D/Core/Object.h>
 #include <Urho3D/Math/StringHash.h>

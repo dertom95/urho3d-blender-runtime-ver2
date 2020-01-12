@@ -7,7 +7,7 @@
 
 #include "GameLogic.h"
 
-#ifdef ENABLE_COMPONENT_EXPORTER
+#ifdef GAME_ENABLE_COMPONENT_EXPORTER
  #include "Subsystems/LoaderTools/ComponentExporter.h"
 #endif
 
@@ -25,7 +25,7 @@ public:
     void SubscribeToEvents();
     void HandleKeyDown(StringHash eventType, VariantMap& eventData);
 
-#ifdef ENABLE_COMPONENT_EXPORTER
+#ifdef GAME_ENABLE_COMPONENT_EXPORTER
     void SetupComponentExporter();
     void ExportComponents(const String& outputPath);
 #endif

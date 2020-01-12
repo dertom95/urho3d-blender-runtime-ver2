@@ -1,2 +1,5 @@
-#cmakedefine ENABLE_COMPONENT_EXPORTER
+#cmakedefine GAME_ENABLE_COMPONENT_EXPORTER
+#cmakedefine GAME_ENABLE_DEBUG_TOOLS
+
 #cmakedefine PROJECT_NAME "@PROJECT_NAME@"
+#cmakedefine GIT_HASH "@GIT_HASH@"

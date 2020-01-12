@@ -1,5 +1,7 @@
 #pragma once
 
+#include <project_options.h>
+
 #include <Urho3D/Core/Object.h>
 #include <Urho3D/Scene/Scene.h>
 #include <Urho3D/Graphics/Viewport.h>
@@ -39,6 +41,10 @@ private:
     void HandlePostRenderUpdate(StringHash eventType, VariantMap &eventData);
     void HandleInput(StringHash eventType, VariantMap& eventData);
     void HandleControlClicked(StringHash eventType, VariantMap& eventData);
+
+#ifdef GAME_ENABLE_DEBUG_TOOLS
+    void HandleConsoleInput(StringHash eventType, VariantMap& eventData);
+#endif
 
     Node* mCameraNode;
     Scene* mScene;

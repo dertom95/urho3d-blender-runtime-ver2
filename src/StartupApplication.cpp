@@ -21,8 +21,9 @@ void StartupApplication::Setup()
 
     ResourceCache* cache=GetSubsystem<ResourceCache>();
     cache->AddResourceDir(resourcePath);
-
+#ifdef GAME_ENABLE_COMPONENT_EXPORTER
     SetupComponentExporter();
+#endif
     // register game
     game_ = new GameLogic(context_);
     context_->RegisterSubsystem(game_);
@@ -35,11 +36,12 @@ void StartupApplication::Start()
 {
     game_->Start();
 
-#ifdef ENABLE_COMPONENT_EXPORTER
+#ifdef GAME_ENABLE_COMPONENT_EXPORTER
     // export registered components
     ExportComponents(String(PROJECT_NAME)+"_components.json");
 #endif
 
+#ifdef GAME_ENABLE_DEBUG_TOOLS
     // Get default style
     ResourceCache* cache = GetSubsystem<ResourceCache>();
     XMLFile* xmlFile = cache->GetResource<XMLFile>("UI/DefaultStyle.xml");
@@ -51,7 +53,7 @@ void StartupApplication::Start()
     // Create debug HUD.
     DebugHud* debugHud = engine_->CreateDebugHud();
     debugHud->SetDefaultStyle(xmlFile);
-
+#endif
 }
 
 void StartupApplication::Stop()
@@ -73,11 +75,20 @@ void StartupApplication::HandleKeyDown(StringHash eventType, VariantMap& eventDa
     if (key == KEY_ESCAPE)
         engine_->Exit();
 
-    if (key == KEY_F2)
+#ifdef GAME_ENABLE_DEBUG_TOOLS
+    if (key == KEY_F10)
         GetSubsystem<DebugHud>()->ToggleAll();
+
+    if (key == KEY_F9){
+
+        Console* console = GetSubsystem<Console>();
+        console->Toggle();
+    }
+
+#endif
 }
 
-#ifdef ENABLE_COMPONENT_EXPORTER
+#ifdef GAME_ENABLE_COMPONENT_EXPORTER
 void StartupApplication::SetupComponentExporter()
 {
     auto exporter = new Urho3DNodeTreeExporter(context_);
