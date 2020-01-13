@@ -35,26 +35,25 @@ private:
     void SetupViewport();
     void SetupScene();
     void SetupInput();
-    void SetupUI();
+    void SetupUI(); // some sample ui
 
     void HandleUpdate(StringHash eventType, VariantMap &eventData);
     void HandlePostRenderUpdate(StringHash eventType, VariantMap &eventData);
-    void HandleInput(StringHash eventType, VariantMap& eventData);
+    void HandleKeyDown(StringHash eventType, VariantMap& eventData);
     void HandleControlClicked(StringHash eventType, VariantMap& eventData);
+
 
 #ifdef GAME_ENABLE_DEBUG_TOOLS
     void HandleConsoleInput(StringHash eventType, VariantMap& eventData);
 #endif
-
     Node* mCameraNode;
     Scene* mScene;
     Viewport* mViewport;
 
-    SoundSource* musicSource_;
-
+    SoundSource* mMusicSource;
     bool mRenderPhysics;
 
-    SharedPtr<Window> window_;
+    SharedPtr<Window> mWindow;
     /// The UI's root UIElement.
-    SharedPtr<UIElement> uiRoot_;
+    SharedPtr<UIElement> mUiRoot;
 };

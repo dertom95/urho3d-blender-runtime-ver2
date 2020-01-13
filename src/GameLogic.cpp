@@ -47,9 +47,9 @@ void GameLogic::SetupScene()
 
     mCameraNode = mScene->GetChild("Camera",true);
 
-    musicSource_ = mScene->CreateComponent<SoundSource>();
+    mMusicSource = mScene->CreateComponent<SoundSource>();
       // Set the sound type to music so that master volume control works correctly
-    musicSource_->SetSoundType(SOUND_MUSIC);
+    mMusicSource->SetSoundType(SOUND_MUSIC);
 }
 
 void GameLogic::SetupInput()
@@ -86,7 +86,7 @@ void GameLogic::SubscribeToEvents()
 {
     SubscribeToEvent(E_UPDATE, URHO3D_HANDLER(GameLogic, HandleUpdate));
     SubscribeToEvent(E_POSTRENDERUPDATE, URHO3D_HANDLER(GameLogic, HandlePostRenderUpdate));
-    SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(GameLogic, HandleInput));
+    SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(GameLogic, HandleKeyDown));
 #ifdef GAME_ENABLE_DEBUG_TOOLS
     SubscribeToEvent(E_CONSOLECOMMAND, URHO3D_HANDLER(GameLogic, HandleConsoleInput));
 #endif
@@ -108,16 +108,28 @@ void GameLogic::HandleUpdate(StringHash eventType, VariantMap &eventData)
 
 void GameLogic::HandlePostRenderUpdate(StringHash eventType, VariantMap &eventData)
 {
-    if (mRenderPhysics) mScene->GetComponent<PhysicsWorld>()->DrawDebugGeometry(false);
+    if (mRenderPhysics) {
+        mScene->GetComponent<PhysicsWorld>()->DrawDebugGeometry(false);
+    }
 }
 
-void GameLogic::HandleInput(StringHash eventType, VariantMap &eventData)
+void GameLogic::HandleKeyDown(StringHash eventType, VariantMap &eventData)
 {
     using namespace KeyDown;
     // Check for pressing ESC. Note the engine_ member variable for convenience access to the Engine object
     int key = eventData[P_KEY].GetInt();
 
-    if (key == KEY_F12){
+#ifdef GAME_ENABLE_DEBUG_TOOLS
+    if (key == KEY_F1){
+        mScene->SetUpdateEnabled(!mScene->IsUpdateEnabled());
+    }
+    else if (key == KEY_F11){
+        File saveFile(context_, "./scene.write.xml",FILE_WRITE);
+        mScene->SaveXML(saveFile);
+        File saveFileBin(context_, "./scene.bin",FILE_WRITE);
+        mScene->Save(saveFileBin);
+    }
+    else if (key == KEY_F12){
         Editor* editor = GetSubsystem<Editor>();
         if (!editor){
             editor = new Editor(context_);
@@ -125,13 +137,7 @@ void GameLogic::HandleInput(StringHash eventType, VariantMap &eventData)
             context_->RegisterSubsystem(editor);
         }
     }
-
-    if (key == KEY_F11){
-        File saveFile(context_, "./scene.write.xml",FILE_WRITE);
-        mScene->SaveXML(saveFile);
-        File saveFileBin(context_, "./scene.bin",FILE_WRITE);
-        mScene->Save(saveFileBin);
-    }
+#endif
 }
 
 void GameLogic::PlaySound(String soundFile)
@@ -153,29 +159,29 @@ void GameLogic::PlayMusic(String musicFile)
     auto* music = cache->GetResource<Sound>("Sounds/"+musicFile);
     // Set the song to loop
     music->SetLooped(true);
-    musicSource_->SetGain(0.35f);
-    musicSource_->Play(music);
+    mMusicSource->SetGain(0.35f);
+    mMusicSource->Play(music);
 }
 
 void GameLogic::SetupUI()
 {
-    uiRoot_ = GetSubsystem<UI>()->GetRoot();
+    mUiRoot = GetSubsystem<UI>()->GetRoot();
     // Create the Window and add it to the UI's root node
     // Load XML file containing default UI style sheet
     auto* cache = GetSubsystem<ResourceCache>();
     auto* style = cache->GetResource<XMLFile>("UI/DefaultStyle.xml");
     // Set the loaded style as default style
-    uiRoot_->SetDefaultStyle(style);
+    mUiRoot->SetDefaultStyle(style);
 
 
-    window_ = new Window(context_);
-    uiRoot_->AddChild(window_);
+    mWindow = new Window(context_);
+    mUiRoot->AddChild(mWindow);
 
     // Set Window size and layout settings
-    window_->SetMinWidth(784);
-    window_->SetLayout(LM_VERTICAL, 6, IntRect(6, 6, 6, 6));
-    window_->SetAlignment(HA_LEFT, VA_TOP);
-    window_->SetName("Window");
+    mWindow->SetMinWidth(784);
+    mWindow->SetLayout(LM_VERTICAL, 6, IntRect(6, 6, 6, 6));
+    mWindow->SetAlignment(HA_LEFT, VA_TOP);
+    mWindow->SetName("Window");
 
     // Create Window 'titlebar' container
     auto* titleBar = new UIElement(context_);
@@ -193,10 +199,10 @@ void GameLogic::SetupUI()
     titleBar->AddChild(windowTitle);
 
     // Add the title bar to the Window
-    window_->AddChild(titleBar);
+    mWindow->AddChild(titleBar);
 
     // Apply styles
-    window_->SetStyleAuto();
+    mWindow->SetStyleAuto();
     windowTitle->SetStyleAuto();
     windowTitle->SetFontSize(18);
     // Subscribe to buttonClose release (following a 'press') events
@@ -209,7 +215,7 @@ void GameLogic::SetupUI()
 void GameLogic::HandleControlClicked(StringHash eventType, VariantMap& eventData)
 {
     // Get the Text control acting as the Window's title
-    auto* windowTitle = window_->GetChildStaticCast<Text>("WindowTitle", true);
+    auto* windowTitle = mWindow->GetChildStaticCast<Text>("WindowTitle", true);
 
     // Get control that was clicked
     auto* clicked = static_cast<UIElement*>(eventData[UIMouseClick::P_ELEMENT].GetPtr());
@@ -240,7 +246,7 @@ void GameLogic::HandleConsoleInput(StringHash eventType, VariantMap& eventData)
 
 void GameLogic::SetUIText(String text)
 {
-    auto* windowTitle = window_->GetChildStaticCast<Text>("WindowTitle", true);
+    auto* windowTitle = mWindow->GetChildStaticCast<Text>("WindowTitle", true);
     windowTitle->SetText(text);
 }
 

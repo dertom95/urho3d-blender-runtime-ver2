@@ -2,4 +2,4 @@
 #define GAME_ENABLE_DEBUG_TOOLS
 
 #define PROJECT_NAME "minimal-urho3d"
-#define GIT_HASH "a775159"
+#define GIT_HASH "2d5dec0"
