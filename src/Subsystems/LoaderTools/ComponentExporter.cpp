@@ -110,21 +110,21 @@ void Urho3DNodeTreeExporter::ProcessFileSystem()
             String dir = resDir+path;
             fs->ScanDir(dirFiles,dir,"*.jpg",SCAN_FILES,true);
             for (String foundTexture : dirFiles){
-                ExportPath p;
+                TextureExportPath p;
                 p.absFilepath = dir +"/"+foundTexture;
                 p.resFilepath = path+"/"+foundTexture;
                 textureFiles.Push(p);
             }
             fs->ScanDir(dirFiles,dir,"*.png",SCAN_FILES,true);
             for (String foundTexture : dirFiles){
-                ExportPath p;
+                TextureExportPath p;
                 p.absFilepath = dir +"/"+foundTexture;
                 p.resFilepath = path+"/"+foundTexture;
                 textureFiles.Push(p);
             }
             fs->ScanDir(dirFiles,dir,"*.dds",SCAN_FILES,true);
             for (String foundTexture : dirFiles){
-                ExportPath p;
+                TextureExportPath p;
                 p.absFilepath = dir +"/"+foundTexture;
                 p.resFilepath = path+"/"+foundTexture;
                 textureFiles.Push(p);
@@ -370,7 +370,7 @@ JSONObject Urho3DNodeTreeExporter::ExportMaterials()
         // dropdown to choose textures available from the resource-path
         JSONArray enumElems;
         int counter=0;
-        for (ExportPath texture : textureFiles){
+        for (TextureExportPath texture : textureFiles){
             StringHash hash(texture.resFilepath);
             String id(hash.Value() % 10000000);
 
@@ -695,7 +695,7 @@ JSONObject Urho3DNodeTreeExporter::ExportComponents()
                                 JSONArray enumElems;
                                 NodeAddEnumElement(enumElems,"none","None","No Texture","TEXTURE");
 
-                                for (ExportPath tex : textureFiles){
+                                for (TextureExportPath tex : textureFiles){
                                     StringHash hash(tex.resFilepath);
                                     String id(hash.Value() % 10000000);
 
@@ -763,7 +763,7 @@ JSONObject Urho3DNodeTreeExporter::ExportGlobalData(){
     globalData["techniques"] = techniques;
 
     JSONArray textures;
-    for (ExportPath texture : textureFiles){
+    for (TextureExportPath texture : textureFiles){
         StringHash hash(texture.resFilepath);
         String id(hash.Value() % 10000000);
 

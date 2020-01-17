@@ -59,6 +59,7 @@ void StartupApplication::Start()
 
 void StartupApplication::Stop()
 {
+    engine_->DumpResources(true);
 }
 
 void StartupApplication::SubscribeToEvents()

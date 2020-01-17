@@ -19,7 +19,7 @@ namespace Urho3D {
 
 using namespace Urho3D;
 
-struct ExportPath{
+struct TextureExportPath{
     String resFilepath;
     String absFilepath;
 };
@@ -90,7 +90,7 @@ private:
 
     Vector<String> materialFiles;
     Vector<String> techniqueFiles;
-    Vector<ExportPath> textureFiles;
+    Vector<TextureExportPath> textureFiles;
     Vector<String> modelFiles;
     Vector<String> animationFiles;
 };
