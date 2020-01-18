@@ -14,7 +14,7 @@
 
 namespace Urho3D {
     class Context;
-
+    class ResourceCache;
 }
 
 using namespace Urho3D;
@@ -41,7 +41,7 @@ public:
     void AddTextureFolder(const String& folder);
     void AddAnimationFolder(const String& folder);
     void AddModelFolder(const String& folder);
-
+    inline void SetResourceCache(SharedPtr<ResourceCache> resCache) { m_resourceCache = resCache; }
     void Export(String filename,bool exportComponentTree=true,bool exportMaterialTree=true);
 
     JSONObject ExportComponents();
@@ -93,5 +93,7 @@ private:
     Vector<TextureExportPath> textureFiles;
     Vector<String> modelFiles;
     Vector<String> animationFiles;
+
+    SharedPtr<ResourceCache> m_resourceCache;
 };
 #endif

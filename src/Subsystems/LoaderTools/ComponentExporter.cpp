@@ -20,6 +20,7 @@ Urho3DNodeTreeExporter::Urho3DNodeTreeExporter(Context* context, ExportMode expo
     : Object(context),
       m_exportMode(exportMode)
 {
+    m_resourceCache = context->GetSubsystem<ResourceCache>();
 }
 
 void Urho3DNodeTreeExporter::AddComponentHashToFilterList(const StringHash& componentHash)
@@ -49,7 +50,8 @@ bool CompareString(const String& a,const String& b){
 
 void Urho3DNodeTreeExporter::ProcessFileSystem()
 {
-    ResourceCache* cache = GetSubsystem<ResourceCache>();
+    ResourceCache* cache = m_resourceCache;
+
     FileSystem* fs = GetSubsystem<FileSystem>();
 
     materialFiles.Clear();

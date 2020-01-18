@@ -13,20 +13,30 @@ if (COMMAND cmake_policy)
     cmake_policy (SET CMP0063 OLD)
 endif ()
 
+include("CMake/HunterGate.cmake")
+
+HunterGate(
+    URL "https://github.com/ruslo/hunter/archive/v0.23.214.tar.gz"
+    SHA1 "e14bc153a7f16d6a5eeec845fb0283c8fad8c358"
+)
+
 # Set project name
-project (minimal-urho3d)
-
-
+project (urho3d-blender-runtime)
 
 
 # Set CMake modules search path
-set (CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMake/Modules)
+set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}  ${CMAKE_CURRENT_SOURCE_DIR}/CMake/Modules)
 # Include UrhoCommon.cmake module after setting project name
 
-set (URHO3D_PACKAGING 1 CACHE BOOL "")
+set (URHO3D_PACKAGING 0 CACHE BOOL "")
 set (URHO3D_DEPLOYMENT_TARGET generic CACHE STRING "") # it is important to set this before running thorugh UrhoCommon
 
 include (UrhoCommon)
+
+# include zeromq via hunter-package-manager
+hunter_add_package(ZeroMQ)
+find_package(ZeroMQ CONFIG REQUIRED)
+# ----
 
 # Define source files
 set (TARGET_NAME ${PROJECT_NAME})
@@ -34,6 +44,7 @@ set (TARGET_NAME ${PROJECT_NAME})
 option(GAME_ENABLE_DEBUG_TOOLS "Enable Debug-Tools(Editor,Console,Profiler)" ON)
 option(GAME_ENABLE_COMPONENT_EXPORTER "Enable Component-Export as JSON" ON)
 option(GAME_RETRIEVE_GIT_HASH "Retrieve current-githash" ON)
+option(GAME_DEBUGGING "Active GAME_DEBUGGING-Define" ON)
 
 set(GIT_HASH "unknown")
 
@@ -56,20 +67,18 @@ endif()
 
 
 # get all source files
-file( GLOB_RECURSE SOURCE_FILES FOLLOW_SYMLINKS ${CMAKE_CURRENT_SOURCE_DIR} src/*.cpp src/*.h )
+file( GLOB_RECURSE SOURCE_FILES FOLLOW_SYMLINKS ${CMAKE_CURRENT_SOURCE_DIR} src/*.cpp src/*.h src/*.hpp)
 
 # create configure file
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/CMake/project_options.h.in ${CMAKE_CURRENT_SOURCE_DIR}/src/Generated/project_options.h @ONLY)
 
-set(INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src/Generated)
+set(INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_SOURCE_DIR}/src/Generated)
 
 list(APPEND ${SOURCE_FILES} ${CMAKE_CURRENT_BINARY_DIR}/project_options.h)
 
 message("created: ${CMAKE_CURRENT_BINARY_DIR}/project_options.h")
-message("All Sources: ${SOURCE_FILES}")
 
-# this is due to a problem of qtcreator grouping the files awkwardly since qtcreator 4.11 (nothing mandatory. remove if wanted)
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCE_FILES})
 
 # Setup target with resource copying
 setup_main_executable ()
+target_link_libraries(${TARGET_NAME} ZeroMQ::libzmq-static)

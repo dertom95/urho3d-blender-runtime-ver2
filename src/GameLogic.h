@@ -8,6 +8,7 @@
 #include <Urho3D/Container/Str.h>
 
 #include "Subsystems/Editor.h"
+#include "BlenderRuntime.h"
 
 using namespace Urho3D;
 
@@ -20,7 +21,9 @@ public:
     ~GameLogic();
 
     void Setup(VariantMap& engineParameters_);
-    void LoadFromFile(String sceneName,Node* node=nullptr);
+    void LoadFromFile(String sceneName,Node* node);
+    void LoadFromFile(String sceneName,Scene* scene=nullptr);
+
     void Start();
     inline Scene* GetScene() { return mScene; }
 

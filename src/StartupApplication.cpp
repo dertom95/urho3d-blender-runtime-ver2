@@ -16,19 +16,22 @@ StartupApplication::StartupApplication(Context* ctx) : Application(ctx)
 
 void StartupApplication::Setup()
 {
-    FileSystem* fs = GetSubsystem<FileSystem>();
-    auto resourcePath = fs->GetProgramDir() + "Data";
-
-    ResourceCache* cache=GetSubsystem<ResourceCache>();
-    cache->AddResourceDir(resourcePath);
 #ifdef GAME_ENABLE_COMPONENT_EXPORTER
     SetupComponentExporter();
 #endif
+
     // register game
     game_ = new GameLogic(context_);
     context_->RegisterSubsystem(game_);
     // setup game
     game_->Setup(engineParameters_);
+
+    FileSystem* fs = GetSubsystem<FileSystem>();
+//    auto resourcePath = fs->GetProgramDir() + "Data";
+
+//    cache->AddResourceDir(resourcePath);
+
+
     ComponentsActivator::RegisterComponents(context_);
 }
 
@@ -44,6 +47,7 @@ void StartupApplication::Start()
 #ifdef GAME_ENABLE_DEBUG_TOOLS
     // Get default style
     ResourceCache* cache = GetSubsystem<ResourceCache>();
+
     XMLFile* xmlFile = cache->GetResource<XMLFile>("UI/DefaultStyle.xml");
     // Create console
     Console* console = engine_->CreateConsole();
@@ -59,7 +63,7 @@ void StartupApplication::Start()
 
 void StartupApplication::Stop()
 {
-    engine_->DumpResources(true);
+   // engine_->DumpResources(true);
 }
 
 void StartupApplication::SubscribeToEvents()

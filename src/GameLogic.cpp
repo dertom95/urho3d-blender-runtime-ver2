@@ -1,7 +1,7 @@
 #include "GameLogic.h"
 #include <Urho3D/Resource/ResourceCache.h>
 #include <Urho3D/Urho3DAll.h>
-
+#include "BlenderRuntime.h"
 
 GameLogic::GameLogic(Context* ctx)
     : Object(ctx),
@@ -35,6 +35,7 @@ void GameLogic::Start()
 
 void GameLogic::SetupSystems()
 {
+    context_->RegisterSubsystem(new BlenderRuntime(context_));
 }
 
 void GameLogic::SetupScene()
@@ -42,14 +43,8 @@ void GameLogic::SetupScene()
     mScene = new Scene(context_);
     context_->RegisterSubsystem( mScene );
 
-    // Create scene subsystem components
-    LoadFromFile("Scenes/Scene.xml");
-
-    mCameraNode = mScene->GetChild("Camera",true);
-
-    mMusicSource = mScene->CreateComponent<SoundSource>();
-      // Set the sound type to music so that master volume control works correctly
-    mMusicSource->SetSoundType(SOUND_MUSIC);
+    mCameraNode = mScene->CreateChild("cameranode");
+    Camera* camera = mCameraNode->CreateComponent<Camera>();
 }
 
 void GameLogic::SetupInput()
@@ -72,13 +67,24 @@ void GameLogic::LoadFromFile(String sceneName, Node* loadInto)
     auto cache = GetSubsystem<ResourceCache>();
     XMLFile* file = cache->GetResource<XMLFile>(sceneName);
     if (file){
-        if (loadInto != nullptr) {
+        loadInto->LoadXML(file->GetRoot());
+    } else {
+        URHO3D_LOGERRORF("no scene %s",sceneName.CString());
+    }
+}
+
+void GameLogic::LoadFromFile(String sceneName, Scene* loadInto)
+{
+    auto cache = GetSubsystem<ResourceCache>();
+    XMLFile* file = cache->GetResource<XMLFile>(sceneName);
+    if (file){
+        if (loadInto){
             loadInto->LoadXML(file->GetRoot());
         } else {
             mScene->LoadXML(file->GetRoot());
         }
     } else {
-        URHO3D_LOGERROR("no scene");
+        URHO3D_LOGERRORF("no scene: %s",sceneName.CString());
     }
 }
 
