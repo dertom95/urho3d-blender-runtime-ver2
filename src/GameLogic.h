@@ -6,6 +6,7 @@
 #include <Urho3D/Scene/Scene.h>
 #include <Urho3D/Graphics/Viewport.h>
 #include <Urho3D/Container/Str.h>
+#include <Urho3D/UI/DropDownList.h>
 
 #include "Subsystems/Editor.h"
 #include "BlenderRuntime.h"
@@ -59,4 +60,6 @@ private:
     SharedPtr<Window> mWindow;
     /// The UI's root UIElement.
     SharedPtr<UIElement> mUiRoot;
+    SharedPtr<DropDownList> mUIExportPaths;
+    SharedPtr<DropDownList> mUIViewIds;
 };

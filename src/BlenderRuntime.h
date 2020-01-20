@@ -5,6 +5,9 @@
 #include <Urho3D/Scene/Scene.h>
 #include <Urho3D/Graphics/Texture2D.h>
 
+#include <Urho3D/UI/Window.h>
+#include <Urho3D/UI/View3D.h>)
+
 #include "Subsystems/LoaderTools/ComponentExporter.h"
 
 class ViewRenderer;
@@ -76,12 +79,16 @@ public:
     inline RenderSettings& GetRenderSettings() { return renderSettings; }
     SharedPtr<BlenderExportPath> GetOrCreateExportPath(String path);
     void UpdateViewRenderer(ViewRenderer* renderer);
+    void AddViewRenderer(ViewRenderer* renderer);
 //    void UpdateAllViewRenderers(Scene* scene=nullptr);
 private:
     void HandleBlenderMessage(StringHash eventType,VariantMap& eventData);
+    void HandleConsoleInput(StringHash eventType, VariantMap& eventData);
     void HandleAfterRender(StringHash eventType, VariantMap& eventData);
+    void HandleMiscEvent(StringHash eventType, VariantMap& eventData);
 
     void InitNetwork();
+    void InitUI();
 
     void ProcessDataChange(JSONObject& dataChange);
 
@@ -90,9 +97,18 @@ private:
     HashMap<String,SharedPtr<BlenderExportPath>> mExportPaths;
     HashMap<int,SharedPtr<BlenderSession>> mSessions;
 
+    int mCurrentVisualViewRendererId;
+    Vector<ViewRenderer*> mViewRenderers;
+
     HashSet<ViewRenderer*> mUpdatedRenderers;
 
     SharedPtr<BlenderNetwork> mBlenderNetwork;
     JSONFile mJsonfile;
     RenderSettings renderSettings;
+
+    SharedPtr<Window> mWindow;
+    /// The UI's root UIElement.
+    SharedPtr<UIElement> mUiRoot;
+    SharedPtr<View3D> mUIView3D;
+    SharedPtr<ResourceCache> mGlobalResourceCache;
 };

@@ -21,6 +21,9 @@ ViewRenderer* BlenderSession::GetOrCreateView(int viewID)
 
     ViewRenderer* newRenderer = new ViewRenderer(context_,SharedPtr<BlenderSession>(this),viewID);
     mSessionRenderers[viewID] = newRenderer;
+
+    GetSubsystem<BlenderRuntime>()->AddViewRenderer(newRenderer);
+
     return newRenderer;
 }
 
@@ -95,10 +98,9 @@ void BlenderExportPath::HandleResourcesChanged(StringHash eventType, VariantMap 
     String filename = eventdata[P_FILENAME].GetString();
     String resName = eventdata[P_RESOURCENAME].GetString();
 
+    context_->RegisterSubsystem(mResourceCache);
     if (resName.StartsWith("Scenes")){
         SharedPtr<ResourceCache> globalCache = SharedPtr<ResourceCache>(GetSubsystem<ResourceCache>());
-        context_->RegisterSubsystem(mResourceCache);
-
         if (mScenes.Contains(resName)){
             SharedPtr<File> file = mResourceCache->GetFile(resName);
 
@@ -116,12 +118,10 @@ void BlenderExportPath::HandleResourcesChanged(StringHash eventType, VariantMap 
     }
     else if (resName.StartsWith("Materials")){
         SharedPtr<ResourceCache> globalCache = SharedPtr<ResourceCache>(GetSubsystem<ResourceCache>());
-        context_->RegisterSubsystem(mResourceCache);
 
         mResourceCache->ReloadResourceWithDependencies(resName);
         mResourceCache->ReloadResourceWithDependencies(filename);
         // TODO
-        context_->RegisterSubsystem(globalCache);
     }
 
     if (resName.EndsWith("png") || resName.EndsWith("jpg") || resName.EndsWith("dds")){
@@ -144,14 +144,11 @@ SharedPtr<Scene> BlenderExportPath::GetScene(String sceneName)
     Scene* newScene = new Scene(context_);
 
     // load scene and change to the exportPath's ResourceCache first
-    SharedPtr<ResourceCache> globalCache = SharedPtr<ResourceCache>(GetSubsystem<ResourceCache>());
     context_->RegisterSubsystem(mResourceCache);
 
     XMLFile* file = mResourceCache->GetResource<XMLFile>(sceneName);
     newScene->LoadXML(file->GetRoot());
 
-    // and switch back to the global one again
-    context_->RegisterSubsystem(globalCache);
 
     mScenes[sceneName]=newScene;
     return SharedPtr<Scene>(newScene);
@@ -166,11 +163,15 @@ void BlenderExportPath::ExportMaterials()
 
 BlenderRuntime::BlenderRuntime(Context *ctx)
     : Object(ctx),
-      mJsonfile(ctx)
+      mJsonfile(ctx),
+      mViewRenderers(10),
+      mCurrentVisualViewRendererId(-1)
 {
+    mGlobalResourceCache = GetSubsystem<ResourceCache>();
     InitNetwork();
-
     SubscribeToEvent(E_ENDALLVIEWSRENDER, URHO3D_HANDLER(BlenderRuntime, HandleAfterRender));
+    SubscribeToEvent(E_CONSOLECOMMAND, URHO3D_HANDLER(BlenderRuntime, HandleConsoleInput));
+    SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(BlenderRuntime, HandleMiscEvent));
 }
 
 
@@ -216,15 +217,33 @@ void BlenderRuntime::HandleBlenderMessage(StringHash eventType, VariantMap &even
             JSONObject data  =  d.GetCustom<JSONObject>();
             ProcessDataChange(data);
         }
+        else if (subtype == "settings") {
+            auto d = eventData[P_DATA];
+            JSONObject json  =  d.GetCustom<JSONObject>();
+            renderSettings.showPhysics = json["show_physics"].GetBool();
+            renderSettings.showPhysicsDepth = json["show_physics_depth"].GetBool();
+            renderSettings.activatePhysics = json["activate_physics"].GetBool();
+        }
+
     }
-    //*static_cast<JSONObject*>(eventData[P_DATA].GetVoidPtr());
-//    if (subtype == "data_change"){
-//        HandleRenderRequestFromBlender(data);
-//    }
-//    else if (subtype == "settings") {
-//        HandleSettingsRequestFromBlender(data);
-//    }
 }
+
+#ifdef GAME_ENABLE_DEBUG_TOOLS
+void BlenderRuntime::HandleConsoleInput(StringHash eventType, VariantMap& eventData)
+{
+    using namespace ConsoleCommand;
+    String command = eventData[P_COMMAND].GetString();
+    String id = eventData[P_ID].GetString();
+
+    if (command == "list_exportpaths"){
+        URHO3D_LOGINFO("Export:");
+        for (String exports : mExportPaths.Keys()){
+            URHO3D_LOGINFOF("%s",exports.CString());
+        }
+
+    }
+}
+#endif
 
 void BlenderRuntime::HandleAfterRender(StringHash eventType, VariantMap& eventData)
 {
@@ -358,14 +377,33 @@ void BlenderRuntime::ProcessDataChange(JSONObject &json)
 //            UpdateViewRenderer(view);
 //            PhysicsWorld* pw = view->GetScene()->GetComponent<PhysicsWorld>();
 //            pw->SetUpdateEnabled(settings.activatePhysics);
-//        }
+//        }f
 //    }
 //}
 
-void BlenderRuntime::UpdateViewRenderer(ViewRenderer *renderer)
+void BlenderRuntime::HandleMiscEvent(StringHash eventType, VariantMap &eventData)
 {
-    renderer->RequestRender();
-    mUpdatedRenderers.Insert(renderer);
+    if (eventType == E_KEYDOWN){
+        using namespace KeyDown;
+        int key = eventData[P_KEY].GetInt();
+        if (key == KEY_SPACE){
+            if (mViewRenderers.Size() == 0) return;
+
+            mCurrentVisualViewRendererId = ++mCurrentVisualViewRendererId % mViewRenderers.Size();
+        }
+    }
+}
+
+void BlenderRuntime::UpdateViewRenderer(ViewRenderer *view)
+{
+
+    Renderer* renderer = GetSubsystem<Renderer>();
+    if (view->GetViewport() != renderer->GetViewport(0)){
+        renderer->SetViewport(0,view->GetViewport());
+    }
+
+    view->RequestRender();
+    mUpdatedRenderers.Insert(view);
 }
 
 SharedPtr<BlenderSession> BlenderRuntime::GetOrCreateSession(int sessionID)
@@ -377,4 +415,12 @@ SharedPtr<BlenderSession> BlenderRuntime::GetOrCreateSession(int sessionID)
     SharedPtr<BlenderSession> newSession(new BlenderSession(context_,sessionID));
     mSessions[sessionID] = newSession;
     return newSession;
+}
+
+
+void BlenderRuntime::AddViewRenderer(ViewRenderer *renderer)
+{
+    mViewRenderers.Push(renderer);
+    auto getIt = mViewRenderers[mViewRenderers.Size()-1];
+    int a=0;
 }

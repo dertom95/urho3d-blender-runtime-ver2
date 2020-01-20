@@ -19,10 +19,6 @@ ViewRenderer::ViewRenderer(Context* ctx, SharedPtr<BlenderSession> parent_, int 
     //netId = "runtime-"+String(id);
     netId = "runtime-"+String(parent->GetSessionId())+"-"+String(id);
     SubscribeToEvent(E_BLENDER_SCENE_UPDATED,URHO3D_HANDLER(ViewRenderer,HandleSceneUpdate));
-// 20200117
-//    currentScene_ = initialScene;
-//
-//      SetSize(width,height,fov);
 }
 
 void ViewRenderer::SetScene(Scene *scene)
@@ -160,10 +156,11 @@ void ViewRenderer::HandleSceneUpdate(StringHash eventType, VariantMap &eventdata
 
 void ViewRenderer::RequestRender()
 {
-//    if (parent->renderSettings.showPhysics) {
-//        PhysicsWorld* pw = currentScene_->GetComponent<PhysicsWorld>(true);
-//        pw->DrawDebugGeometry(parent->renderSettings.showPhysicsDepth);
-//    }
+    if (parent->renderSettings.showPhysics) {
+        PhysicsWorld* pw = currentScene_->GetOrCreateComponent<PhysicsWorld>();
+        currentScene_->GetOrCreateComponent<DebugRenderer>();
+        pw->DrawDebugGeometry(parent->renderSettings.showPhysicsDepth);
+    }
     renderSurface_->QueueUpdate();
 }
 
