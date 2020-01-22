@@ -74,7 +74,7 @@ class BlenderRuntime : public Object {
     URHO3D_OBJECT(BlenderRuntime,Object)
 public:
     BlenderRuntime(Context* ctx);
-
+    ~BlenderRuntime();
     inline RenderSettings& GetRenderSettings() { return renderSettings; }
     SharedPtr<BlenderExportPath> GetOrCreateExportPath(String path);
     void UpdateViewRenderer(ViewRenderer* renderer);

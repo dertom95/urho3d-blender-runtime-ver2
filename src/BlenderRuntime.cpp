@@ -175,6 +175,11 @@ BlenderRuntime::BlenderRuntime(Context *ctx)
 }
 
 
+BlenderRuntime::~BlenderRuntime()
+{
+    mBlenderNetwork->Close();
+}
+
 void BlenderRuntime::InitNetwork()
 {
     if (!mBlenderNetwork){
@@ -223,6 +228,10 @@ void BlenderRuntime::HandleBlenderMessage(StringHash eventType, VariantMap &even
             renderSettings.showPhysics = json["show_physics"].GetBool();
             renderSettings.showPhysicsDepth = json["show_physics_depth"].GetBool();
             renderSettings.activatePhysics = json["activate_physics"].GetBool();
+        }
+        else if (subtype == "ping") {
+            BlenderNetwork* bN = GetSubsystem<BlenderNetwork>();
+            bN->Send("runtime","pong","ping response","__meta__");
         }
 
     }
