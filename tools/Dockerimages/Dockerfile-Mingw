@@ -7,3 +7,5 @@ RUN cd /Urho3D && /mingw_entrypoint.sh rake make mingw -j $(nproc)
 ENV URHO3D_HOME=/Urho3D/build/mingw
 
 ADD PackageTool /Urho3D/build/mingw/bin/tool
+
+ENV MINGW_SYSROOT=/usr/x86_64-w64-mingw32

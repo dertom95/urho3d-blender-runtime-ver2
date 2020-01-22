@@ -6,7 +6,6 @@
 #include <Urho3D/Graphics/Texture2D.h>
 
 #include <Urho3D/UI/Window.h>
-#include <Urho3D/UI/View3D.h>)
 
 #include "Subsystems/LoaderTools/ComponentExporter.h"
 
@@ -109,6 +108,5 @@ private:
     SharedPtr<Window> mWindow;
     /// The UI's root UIElement.
     SharedPtr<UIElement> mUiRoot;
-    SharedPtr<View3D> mUIView3D;
     SharedPtr<ResourceCache> mGlobalResourceCache;
 };
