@@ -54,6 +54,7 @@ class BlenderSession : public Object{
     URHO3D_OBJECT(BlenderSession,Object)
 public:
     BlenderSession(Context* ctx, int sessionId);
+    ~BlenderSession();
 
     ViewRenderer* GetOrCreateView(int viewId);
     inline int GetSessionId() { return mSessionId; }
@@ -61,13 +62,15 @@ public:
     void SetExportPath(SharedPtr<BlenderExportPath> exportPath);
     SharedPtr<Scene> SetScene(String sceneName);
     RenderSettings renderSettings;
-
+    void Ping();
+    inline float GetLastPing(){ return mLastPing;}
 private:
     int mSessionId;
     String mCurrentSceneName;
     SharedPtr<Scene> mCurrentScene;
     SharedPtr<BlenderExportPath> mCurrentExportpath;
     HashMap<int,ViewRenderer*> mSessionRenderers; // every window that should be rendered with Urho3D-Renderer
+    float mLastPing;
 };
 
 class BlenderRuntime : public Object {
@@ -85,12 +88,16 @@ private:
     void HandleConsoleInput(StringHash eventType, VariantMap& eventData);
     void HandleAfterRender(StringHash eventType, VariantMap& eventData);
     void HandleMiscEvent(StringHash eventType, VariantMap& eventData);
+    void HandleUpdate(StringHash eventType, VariantMap& eventData);
 
     void InitNetwork();
     void InitUI();
 
+    void CheckSessions();
+
     void ProcessDataChange(JSONObject& dataChange);
 
+    SharedPtr<BlenderSession> GetSession(int sessionID);
     SharedPtr<BlenderSession> GetOrCreateSession(int sessionID);
 
     HashMap<String,SharedPtr<BlenderExportPath>> mExportPaths;
@@ -109,4 +116,6 @@ private:
     /// The UI's root UIElement.
     SharedPtr<UIElement> mUiRoot;
     SharedPtr<ResourceCache> mGlobalResourceCache;
+
+    float mSessionCleanUpCheckTimer;
 };

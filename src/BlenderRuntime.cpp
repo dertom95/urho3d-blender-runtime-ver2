@@ -10,8 +10,14 @@
 
 BlenderSession::BlenderSession(Context *ctx, int sessionId)
     : Object(ctx),
-      mSessionId(sessionId)
+      mSessionId(sessionId),
+      mLastPing(0)
 {}
+
+BlenderSession::~BlenderSession()
+{
+    URHO3D_LOGINFOF("Destruction %i",mSessionId);
+}
 
 ViewRenderer* BlenderSession::GetOrCreateView(int viewID)
 {
@@ -56,6 +62,13 @@ SharedPtr<Scene> BlenderSession::SetScene(String sceneName)
     return nullptr;
 }
 
+void BlenderSession::Ping()
+{
+    Time* time = GetSubsystem<Time>();
+    auto ts = time->GetTimeStamp();
+    auto timeStep = time->GetTimeStep();
+    mLastPing = time->GetElapsedTime();
+}
 
 // ------------------------- Blender Export Path ----------------------------
 
@@ -165,13 +178,15 @@ BlenderRuntime::BlenderRuntime(Context *ctx)
     : Object(ctx),
       mJsonfile(ctx),
       mViewRenderers(10),
-      mCurrentVisualViewRendererId(-1)
+      mCurrentVisualViewRendererId(-1),
+      mSessionCleanUpCheckTimer(0)
 {
     mGlobalResourceCache = GetSubsystem<ResourceCache>();
     InitNetwork();
     SubscribeToEvent(E_ENDALLVIEWSRENDER, URHO3D_HANDLER(BlenderRuntime, HandleAfterRender));
     SubscribeToEvent(E_CONSOLECOMMAND, URHO3D_HANDLER(BlenderRuntime, HandleConsoleInput));
     SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(BlenderRuntime, HandleMiscEvent));
+    SubscribeToEvent(E_UPDATE, URHO3D_HANDLER(BlenderRuntime, HandleUpdate));
 }
 
 
@@ -231,7 +246,20 @@ void BlenderRuntime::HandleBlenderMessage(StringHash eventType, VariantMap &even
         }
         else if (subtype == "ping") {
             BlenderNetwork* bN = GetSubsystem<BlenderNetwork>();
-            bN->Send("runtime","pong","ping response");
+            auto d = eventData[P_DATA];
+            JSONObject inJson  =  d.GetCustom<JSONObject>();
+            int session_id = inJson["session_id"].GetInt();
+
+            BlenderSession* session = GetSession(session_id);
+            if (session){
+                session->Ping();
+            }
+
+
+            mJsonfile.GetRoot().Clear();
+            mJsonfile.GetRoot().Set("session_id",session_id);
+
+            bN->Send("runtime","pong","ping response",mJsonfile.ToString());
         }
 
     }
@@ -403,6 +431,17 @@ void BlenderRuntime::HandleMiscEvent(StringHash eventType, VariantMap &eventData
     }
 }
 
+void BlenderRuntime::HandleUpdate(StringHash eventType, VariantMap &eventData)
+{
+    using namespace Update;
+    float time = eventData[P_TIMESTEP].GetFloat();
+    mSessionCleanUpCheckTimer -= time;
+    if (mSessionCleanUpCheckTimer < 0){
+        CheckSessions();
+        mSessionCleanUpCheckTimer = 10.0f;
+    }
+}
+
 void BlenderRuntime::UpdateViewRenderer(ViewRenderer *view)
 {
 
@@ -415,12 +454,21 @@ void BlenderRuntime::UpdateViewRenderer(ViewRenderer *view)
     mUpdatedRenderers.Insert(view);
 }
 
-SharedPtr<BlenderSession> BlenderRuntime::GetOrCreateSession(int sessionID)
+SharedPtr<BlenderSession> BlenderRuntime::GetSession(int sessionID)
 {
     if (mSessions.Contains(sessionID)){
         auto session = mSessions[sessionID];
         return session;
     }
+    return nullptr;
+}
+
+SharedPtr<BlenderSession> BlenderRuntime::GetOrCreateSession(int sessionID)
+{
+    SharedPtr<BlenderSession> result = GetSession(sessionID);
+
+    if (result) return result;
+
     SharedPtr<BlenderSession> newSession(new BlenderSession(context_,sessionID));
     mSessions[sessionID] = newSession;
     return newSession;
@@ -432,4 +480,22 @@ void BlenderRuntime::AddViewRenderer(ViewRenderer *renderer)
     mViewRenderers.Push(renderer);
     auto getIt = mViewRenderers[mViewRenderers.Size()-1];
     int a=0;
+}
+
+void BlenderRuntime::CheckSessions()
+{
+#ifdef GAME_DEBUGGING
+    URHO3D_LOGINFO("Checking sessions");
+#endif
+    Time* time = GetSubsystem<Time>();
+    float minimumPing = time->GetElapsedTime() - 15.0f;
+    for (int key : mSessions.Keys()){
+        BlenderSession* session = mSessions[key];
+        if (session->GetLastPing() < minimumPing ){
+            mSessions.Erase(key);
+#ifdef GAME_DEBUGGING
+            URHO3D_LOGINFOF("Remove session %i",key);
+#endif
+        }
+    }
 }
