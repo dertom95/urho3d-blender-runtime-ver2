@@ -231,7 +231,7 @@ void BlenderRuntime::HandleBlenderMessage(StringHash eventType, VariantMap &even
         }
         else if (subtype == "ping") {
             BlenderNetwork* bN = GetSubsystem<BlenderNetwork>();
-            bN->Send("runtime","pong","ping response","__meta__");
+            bN->Send("runtime","pong","ping response");
         }
 
     }
