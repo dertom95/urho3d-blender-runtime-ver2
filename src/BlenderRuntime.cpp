@@ -368,6 +368,10 @@ void BlenderRuntime::ProcessDataChange(JSONObject &json)
         view->SetScene(scene);
     }
 
+    if (!view->GetScene()){
+        return;
+    }
+
     if (json.Contains("resolution")){
         auto resolution = json["resolution"].GetObject();
         int width = resolution["width"].GetInt();
