@@ -82,12 +82,9 @@ BlenderExportPath::BlenderExportPath(Context *ctx, String exportPath)
 
     mResourceCache = new ResourceCache(ctx);
 
-    mResourceCache->AddResourceDir(exportPath);
     mResourceCache->AddResourceDir(coreDataFolder);
+    mResourceCache->AddResourceDir(exportPath);
 
-    String res1 = globalCache->GetResourceDirs()[0];
-
-    mResourceCache->AddResourceDir(res1);
     mResourceCache->SetAutoReloadResources(true);
 
     mExportMaterialsPath = mExportPath+"/__blender_material.json";
@@ -126,15 +123,11 @@ void BlenderExportPath::HandleResourcesChanged(StringHash eventType, VariantMap 
             data[P_SCENE]=MakeCustomValue(scene);
             SendEvent(E_BLENDER_SCENE_UPDATED,data);
         }
-        // TODO
-        context_->RegisterSubsystem(globalCache);
     }
     else if (resName.StartsWith("Materials")){
         SharedPtr<ResourceCache> globalCache = SharedPtr<ResourceCache>(GetSubsystem<ResourceCache>());
 
         mResourceCache->ReloadResourceWithDependencies(resName);
-        mResourceCache->ReloadResourceWithDependencies(filename);
-        // TODO
     }
 
     if (resName.EndsWith("png") || resName.EndsWith("jpg") || resName.EndsWith("dds")){
@@ -159,11 +152,20 @@ SharedPtr<Scene> BlenderExportPath::GetScene(String sceneName)
     // load scene and change to the exportPath's ResourceCache first
     context_->RegisterSubsystem(mResourceCache);
 
+    URHO3D_LOGINFOF("##__## LOAD SCENE %s",sceneName.CString());
+
     XMLFile* file = mResourceCache->GetResource<XMLFile>(sceneName);
     newScene->LoadXML(file->GetRoot());
 
-
     mScenes[sceneName]=newScene;
+    mResourceCache->ReloadResourceWithDependencies(sceneName);
+
+    using namespace BlenderSceneUpdated;
+    VariantMap data;
+    data[P_SCENE_NAME]=sceneName;
+    data[P_SCENE]=MakeCustomValue(newScene);
+    SendEvent(E_BLENDER_SCENE_UPDATED,data);
+
     return SharedPtr<Scene>(newScene);
 }
 
@@ -180,7 +182,8 @@ BlenderRuntime::BlenderRuntime(Context *ctx)
       mViewRenderers(10),
       mCurrentVisualViewRendererId(-1),
       mSessionCleanUpCheckTimer(0),
-      mUpdateTicker(0)
+      mUpdateTicker(0),
+      mSendHello(false)
 {
     mGlobalResourceCache = GetSubsystem<ResourceCache>();
     InitNetwork();
@@ -261,7 +264,14 @@ void BlenderRuntime::HandleBlenderMessage(StringHash eventType, VariantMap &even
             mJsonfile.GetRoot().Clear();
             mJsonfile.GetRoot().Set("session_id",session_id);
 
+            if (!mSendHello){
+                bN->Send("runtime","hello","");
+                mSendHello = true;
+            }
+
             bN->Send("runtime","pong","ping response",mJsonfile.ToString());
+            // tell the network that we are on and ready to work
+
         }
 
     }

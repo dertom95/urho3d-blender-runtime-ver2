@@ -119,4 +119,6 @@ private:
 
     float mSessionCleanUpCheckTimer;
     float mUpdateTicker;
+
+    bool mSendHello;
 };
