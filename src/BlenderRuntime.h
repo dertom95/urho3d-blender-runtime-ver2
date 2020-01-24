@@ -106,7 +106,7 @@ private:
     int mCurrentVisualViewRendererId;
     Vector<ViewRenderer*> mViewRenderers;
 
-    HashSet<ViewRenderer*> mUpdatedRenderers;
+    HashMap<Texture2D*, ViewRenderer* > mUpdatedRenderers;
 
     SharedPtr<BlenderNetwork> mBlenderNetwork;
     JSONFile mJsonfile;
@@ -118,4 +118,5 @@ private:
     SharedPtr<ResourceCache> mGlobalResourceCache;
 
     float mSessionCleanUpCheckTimer;
+    float mUpdateTicker;
 };

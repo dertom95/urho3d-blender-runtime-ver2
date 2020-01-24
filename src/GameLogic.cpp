@@ -19,8 +19,8 @@ void GameLogic::Setup(VariantMap& engineParameters_)
 {
     engineParameters_[EP_FULL_SCREEN]=false;
     engineParameters_[EP_WINDOW_RESIZABLE]=true;
-    engineParameters_[EP_WINDOW_WIDTH]=1700;
-    engineParameters_[EP_WINDOW_HEIGHT]=1000;
+    engineParameters_[EP_WINDOW_WIDTH]=640;
+    engineParameters_[EP_WINDOW_HEIGHT]=480;
     SubscribeToEvents();
 }
 
@@ -30,7 +30,7 @@ void GameLogic::Start()
     SetupScene();
     SetupViewport();
     SetupInput();
-    SetupUI();
+  //  SetupUI();
 }
 
 void GameLogic::SetupSystems()

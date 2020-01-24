@@ -179,11 +179,13 @@ BlenderRuntime::BlenderRuntime(Context *ctx)
       mJsonfile(ctx),
       mViewRenderers(10),
       mCurrentVisualViewRendererId(-1),
-      mSessionCleanUpCheckTimer(0)
+      mSessionCleanUpCheckTimer(0),
+      mUpdateTicker(0)
 {
     mGlobalResourceCache = GetSubsystem<ResourceCache>();
     InitNetwork();
-    SubscribeToEvent(E_ENDALLVIEWSRENDER, URHO3D_HANDLER(BlenderRuntime, HandleAfterRender));
+//    SubscribeToEvent(E_ENDALLVIEWSRENDER, URHO3D_HANDLER(BlenderRuntime, HandleAfterRender));
+    SubscribeToEvent(E_ENDVIEWRENDER, URHO3D_HANDLER(BlenderRuntime, HandleAfterRender));
     SubscribeToEvent(E_CONSOLECOMMAND, URHO3D_HANDLER(BlenderRuntime, HandleConsoleInput));
     SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(BlenderRuntime, HandleMiscEvent));
     SubscribeToEvent(E_UPDATE, URHO3D_HANDLER(BlenderRuntime, HandleUpdate));
@@ -282,14 +284,16 @@ void BlenderRuntime::HandleConsoleInput(StringHash eventType, VariantMap& eventD
 }
 #endif
 
+
+
 void BlenderRuntime::HandleAfterRender(StringHash eventType, VariantMap& eventData)
 {
-    for (ViewRenderer* view : mUpdatedRenderers){
-        //screenshotTimer = screenshotInterval;
-        //rtRenderRequested=false;
+    using namespace EndViewRender;
 
-        URHO3D_LOGINFO("AFTER RENDER");
-        auto rtTexture = view->GetRenderTexture();
+    Texture2D* rtTexture = static_cast<Texture2D*>(eventData[P_TEXTURE].GetPtr());
+
+    if (rtTexture && mUpdatedRenderers.Contains(rtTexture)){
+        ViewRenderer* view = mUpdatedRenderers[rtTexture];
 
         int imageSize = rtTexture->GetDataSize(rtTexture->GetWidth(), rtTexture->GetHeight());
         unsigned char* _ImageData = new unsigned char[imageSize];
@@ -308,8 +312,10 @@ void BlenderRuntime::HandleAfterRender(StringHash eventType, VariantMap& eventDa
         //_pImage->SavePNG(additionalResourcePath+"/Screenshot"+String(view->GetId())+".png");
 
         delete[] _ImageData;
+        mUpdatedRenderers.Erase(rtTexture);
+    } else {
+        int unknown=1;
     }
-    mUpdatedRenderers.Clear();
 
 //    if (rtRenderRequested && screenshotTimer <= 0 ){
 
@@ -444,6 +450,14 @@ void BlenderRuntime::HandleUpdate(StringHash eventType, VariantMap &eventData)
         CheckSessions();
         mSessionCleanUpCheckTimer = 10.0f;
     }
+
+    mUpdateTicker -= time;
+    if (mUpdateTicker <= 0){
+        for (auto kv : mUpdatedRenderers){
+            kv.second_->RequestRender();
+        }
+        mUpdateTicker = 0.05f;
+    }
 }
 
 void BlenderRuntime::UpdateViewRenderer(ViewRenderer *view)
@@ -454,8 +468,7 @@ void BlenderRuntime::UpdateViewRenderer(ViewRenderer *view)
         renderer->SetViewport(0,view->GetViewport());
     }
 
-    view->RequestRender();
-    mUpdatedRenderers.Insert(view);
+    mUpdatedRenderers[view->GetRenderTexture()]=view;
 }
 
 SharedPtr<BlenderSession> BlenderRuntime::GetSession(int sessionID)

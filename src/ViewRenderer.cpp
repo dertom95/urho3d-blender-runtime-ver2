@@ -45,7 +45,7 @@ void ViewRenderer::SetScene(Scene *scene)
 
     if (viewport_){
         viewport_->SetScene(scene);
-        renderSurface_->QueueUpdate();
+        //renderSurface_->QueueUpdate();
     }
 }
 
@@ -118,7 +118,7 @@ void ViewRenderer::SetViewMatrix(const Vector3& t,const Vector3& r,const Vector3
     auto rot = viewportCameraNode_->GetRotation().EulerAngles();
     URHO3D_LOGINFOF("ROTATION:%s",rot.ToString().CString());
 
-    renderSurface_->QueueUpdate();
+  //  renderSurface_->QueueUpdate();
 }
 
 void ViewRenderer::SetSize(int width, int height, float fov)
@@ -140,7 +140,7 @@ void ViewRenderer::SetSize(int width, int height, float fov)
     viewport_ = new Viewport(ctx_, currentScene_, viewportCamera_);
     renderSurface_->SetViewport(0, viewport_);
     renderSurface_->SetUpdateMode(SURFACE_MANUALUPDATE);
-    renderSurface_->QueueUpdate();
+  //  renderSurface_->QueueUpdate();
 }
 
 void ViewRenderer::HandleSceneUpdate(StringHash eventType, VariantMap &eventdata)
