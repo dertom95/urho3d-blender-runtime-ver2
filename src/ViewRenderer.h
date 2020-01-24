@@ -34,7 +34,8 @@ public:
 private:
     void HandleSceneUpdate(StringHash eventType, VariantMap& eventdata);
 
-    WeakPtr<BlenderSession> parent;
+    SharedPtr<BlenderSession> parent;
+    //WeakPtr<BlenderSession> parent;
 
     String netId;
     int viewId_;
