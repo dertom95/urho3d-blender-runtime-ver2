@@ -85,14 +85,12 @@ BlenderExportPath::BlenderExportPath(Context *ctx, String exportPath)
     : Object(ctx),
       mExportPath(exportPath)
 {
-    ResourceCache* globalCache = GetSubsystem<ResourceCache>();
-
     mResourceCache = new ResourceCache(ctx);
 
     mResourceCache->AddResourceDir(exportPath);
-    mResourceCache->AddResourceDir("EditorData");
-    mResourceCache->AddResourceDir("CoreData");
-    mResourceCache->AddResourceDir("Data");
+
+    BlenderRuntime* rt = GetSubsystem<BlenderRuntime>();
+    rt->InjectGlobalResourcePaths(mResourceCache);
 
     mResourceCache->SetAutoReloadResources(true);
 
@@ -207,6 +205,13 @@ BlenderRuntime::BlenderRuntime(Context *ctx)
 BlenderRuntime::~BlenderRuntime()
 {
     mBlenderNetwork->Close();
+}
+
+void BlenderRuntime::InjectGlobalResourcePaths(ResourceCache *resCache)
+{
+    for (String resPath : mGlobalResourceCache->GetResourceDirs()){
+        resCache->AddResourceDir( resPath );
+    }
 }
 
 void BlenderRuntime::InitNetwork()

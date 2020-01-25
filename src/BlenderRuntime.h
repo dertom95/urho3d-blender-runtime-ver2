@@ -83,6 +83,7 @@ public:
     void UpdateViewRenderer(ViewRenderer* renderer);
     void AddViewRenderer(ViewRenderer* renderer);
 //    void UpdateAllViewRenderers(Scene* scene=nullptr);
+    void InjectGlobalResourcePaths(ResourceCache* resCache);
 private:
     void HandleBlenderMessage(StringHash eventType,VariantMap& eventData);
     void HandleConsoleInput(StringHash eventType, VariantMap& eventData);
