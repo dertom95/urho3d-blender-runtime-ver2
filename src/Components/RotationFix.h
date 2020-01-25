@@ -15,6 +15,6 @@ public:
 
     RotationFix(Context* ctx);
 
-    void DelayedStart() override;
+    void Start() override;
 
 };

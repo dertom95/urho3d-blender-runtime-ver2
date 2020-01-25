@@ -16,7 +16,7 @@ void RotationFix::RegisterObject(Context *context)
 
 }
 
-void RotationFix::DelayedStart()
+void RotationFix::Start()
 {
     node_->Rotate(Quaternion(90,0,90));
     SetEnabled(false);
