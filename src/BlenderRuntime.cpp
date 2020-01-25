@@ -86,13 +86,13 @@ BlenderExportPath::BlenderExportPath(Context *ctx, String exportPath)
       mExportPath(exportPath)
 {
     ResourceCache* globalCache = GetSubsystem<ResourceCache>();
-    String dataFolder = globalCache->GetResourceDirs()[0];
-    String coreDataFolder = globalCache->GetResourceDirs()[1];
 
     mResourceCache = new ResourceCache(ctx);
 
-    mResourceCache->AddResourceDir(coreDataFolder);
     mResourceCache->AddResourceDir(exportPath);
+    mResourceCache->AddResourceDir("EditorData");
+    mResourceCache->AddResourceDir("CoreData");
+    mResourceCache->AddResourceDir("Data");
 
     mResourceCache->SetAutoReloadResources(true);
 
