@@ -70,6 +70,15 @@ void BlenderSession::Ping()
     mLastPing = time->GetElapsedTime();
 }
 
+void BlenderSession::UpdateSessionViewRenderers()
+{
+    BlenderRuntime* rt = GetSubsystem<BlenderRuntime>();
+
+    for (ViewRenderer* vr: mSessionRenderers.Values()){
+        rt->UpdateViewRenderer(vr);
+    }
+}
+
 // ------------------------- Blender Export Path ----------------------------
 
 BlenderExportPath::BlenderExportPath(Context *ctx, String exportPath)
@@ -245,9 +254,15 @@ void BlenderRuntime::HandleBlenderMessage(StringHash eventType, VariantMap &even
         else if (subtype == "settings") {
             auto d = eventData[P_DATA];
             JSONObject json  =  d.GetCustom<JSONObject>();
-            renderSettings.showPhysics = json["show_physics"].GetBool();
-            renderSettings.showPhysicsDepth = json["show_physics_depth"].GetBool();
-            renderSettings.activatePhysics = json["activate_physics"].GetBool();
+
+            int session_id = json["session_id"].GetInt();
+            BlenderSession* session = GetSession(session_id);
+
+            session->renderSettings.showPhysics = json["show_physics"].GetBool();
+            session->renderSettings.showPhysicsDepth = json["show_physics_depth"].GetBool();
+            session->renderSettings.activatePhysics = json["activate_physics"].GetBool();
+
+            session->UpdateSessionViewRenderers();
         }
         else if (subtype == "ping") {
             BlenderNetwork* bN = GetSubsystem<BlenderNetwork>();

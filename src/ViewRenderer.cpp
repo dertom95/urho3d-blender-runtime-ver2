@@ -156,7 +156,7 @@ void ViewRenderer::HandleSceneUpdate(StringHash eventType, VariantMap &eventdata
 
 void ViewRenderer::RequestRender()
 {
-    if (parent->renderSettings.showPhysics) {
+    if (parent->renderSettings.showPhysics){
         PhysicsWorld* pw = currentScene_->GetOrCreateComponent<PhysicsWorld>();
         currentScene_->GetOrCreateComponent<DebugRenderer>();
         pw->DrawDebugGeometry(parent->renderSettings.showPhysicsDepth);

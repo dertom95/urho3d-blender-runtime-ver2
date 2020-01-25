@@ -64,6 +64,7 @@ public:
     RenderSettings renderSettings;
     void Ping();
     inline float GetLastPing(){ return mLastPing;}
+    void UpdateSessionViewRenderers();
 private:
     int mSessionId;
     String mCurrentSceneName;
@@ -78,7 +79,6 @@ class BlenderRuntime : public Object {
 public:
     BlenderRuntime(Context* ctx);
     ~BlenderRuntime();
-    inline RenderSettings& GetRenderSettings() { return renderSettings; }
     SharedPtr<BlenderExportPath> GetOrCreateExportPath(String path);
     void UpdateViewRenderer(ViewRenderer* renderer);
     void AddViewRenderer(ViewRenderer* renderer);
@@ -110,7 +110,6 @@ private:
 
     SharedPtr<BlenderNetwork> mBlenderNetwork;
     JSONFile mJsonfile;
-    RenderSettings renderSettings;
 
     SharedPtr<Window> mWindow;
     /// The UI's root UIElement.

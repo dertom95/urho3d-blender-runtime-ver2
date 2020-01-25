@@ -24,10 +24,7 @@ void Editor::InitEditor()
 
     Scene* scene = GetSubsystem<Scene>();
     Renderer* renderer = GetSubsystem<Renderer>();
-    auto numViews = renderer->GetNumViews();
-    auto numViewports = renderer->GetNumViewports();
-    auto sceneViewport = renderer->GetViewportForScene(scene,0);
-    auto currentView = renderer->GetViewport(0);
+
     initialized_ = true;
 
     if (!context_->GetSubsystem<Script>()){
