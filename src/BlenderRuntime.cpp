@@ -261,7 +261,7 @@ void BlenderRuntime::HandleBlenderMessage(StringHash eventType, VariantMap &even
             JSONObject json  =  d.GetCustom<JSONObject>();
 
             int session_id = json["session_id"].GetInt();
-            BlenderSession* session = GetSession(session_id);
+            BlenderSession* session = GetOrCreateSession(session_id);
 
             session->renderSettings.showPhysics = json["show_physics"].GetBool();
             session->renderSettings.showPhysicsDepth = json["show_physics_depth"].GetBool();
