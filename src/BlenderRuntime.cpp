@@ -81,16 +81,22 @@ void BlenderSession::UpdateSessionViewRenderers()
 
 // ------------------------- Blender Export Path ----------------------------
 
-BlenderExportPath::BlenderExportPath(Context *ctx, String exportPath)
+BlenderExportPath::BlenderExportPath(Context *ctx, String exportPath, bool createResourceCache)
     : Object(ctx),
       mExportPath(exportPath)
 {
-    mResourceCache = new ResourceCache(ctx);
+    if (createResourceCache){
+        mResourceCache = new ResourceCache(ctx);
 
-    mResourceCache->AddResourceDir(exportPath);
+        mResourceCache->AddResourceDir(exportPath);
+        BlenderRuntime* rt = GetSubsystem<BlenderRuntime>();
+        rt->InjectGlobalResourcePaths(mResourceCache);
+    } else {
+        mResourceCache = GetSubsystem<ResourceCache>();
+        mResourceCache->AddResourceDir(exportPath,0);
+    }
 
-    BlenderRuntime* rt = GetSubsystem<BlenderRuntime>();
-    rt->InjectGlobalResourcePaths(mResourceCache);
+
 
     mResourceCache->SetAutoReloadResources(true);
 
@@ -117,7 +123,6 @@ void BlenderExportPath::HandleResourcesChanged(StringHash eventType, VariantMap 
 
     context_->RegisterSubsystem(mResourceCache);
     if (resName.StartsWith("Scenes")){
-        SharedPtr<ResourceCache> globalCache = SharedPtr<ResourceCache>(GetSubsystem<ResourceCache>());
         if (mScenes.Contains(resName)){
             SharedPtr<File> file = mResourceCache->GetFile(resName);
 
@@ -132,9 +137,15 @@ void BlenderExportPath::HandleResourcesChanged(StringHash eventType, VariantMap 
         }
     }
     else if (resName.StartsWith("Materials")){
-        SharedPtr<ResourceCache> globalCache = SharedPtr<ResourceCache>(GetSubsystem<ResourceCache>());
-
         mResourceCache->ReloadResourceWithDependencies(resName);
+
+        using namespace BlenderSceneUpdated;
+        for (auto _sceneKV : mScenes){
+            VariantMap data;
+            data[P_SCENE_NAME]=_sceneKV.first_;
+            data[P_SCENE]=MakeCustomValue(_sceneKV.second_);
+            SendEvent(E_BLENDER_SCENE_UPDATED,data);
+        }
     }
 
     if (resName.EndsWith("png") || resName.EndsWith("jpg") || resName.EndsWith("dds")){
@@ -161,8 +172,9 @@ SharedPtr<Scene> BlenderExportPath::GetScene(String sceneName)
 
     URHO3D_LOGINFOF("##__## LOAD SCENE %s",sceneName.CString());
 
-    XMLFile* file = mResourceCache->GetResource<XMLFile>(sceneName);
-    newScene->LoadXML(file->GetRoot());
+    SharedPtr<File> file = mResourceCache->GetFile(sceneName);
+    //XMLFile* file = mResourceCache->GetResource<XMLFile>(sceneName);
+    newScene->LoadXML(*file);
 
     mScenes[sceneName]=newScene;
     mResourceCache->ReloadResourceWithDependencies(sceneName);
@@ -210,7 +222,9 @@ BlenderRuntime::~BlenderRuntime()
 void BlenderRuntime::InjectGlobalResourcePaths(ResourceCache *resCache)
 {
     for (String resPath : mGlobalResourceCache->GetResourceDirs()){
-        resCache->AddResourceDir( resPath );
+        if (resPath.Contains("CoreData")){
+            resCache->AddResourceDir( resPath );
+        }
     }
 }
 
@@ -232,7 +246,7 @@ SharedPtr<BlenderExportPath> BlenderRuntime::GetOrCreateExportPath(String path)
         return mExportPaths[path];
     }
 
-    SharedPtr<BlenderExportPath> newPath(new BlenderExportPath(context_,path));
+    SharedPtr<BlenderExportPath> newPath(new BlenderExportPath(context_,path, mExportPaths.Size()!=0));
     mExportPaths[path]=newPath;
     return newPath;
 }

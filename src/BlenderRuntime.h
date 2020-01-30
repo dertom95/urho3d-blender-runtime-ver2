@@ -32,7 +32,7 @@ struct RenderSettings {
 class BlenderExportPath : public Object {
     URHO3D_OBJECT(BlenderExportPath,Object)
 public:
-    BlenderExportPath(Context* ctx, String exportPath);
+    BlenderExportPath(Context* ctx, String exportPath, bool createResourceCache=true);
     inline SharedPtr<ResourceCache> GetResourceCache() { return mResourceCache; }
 
     SharedPtr<Scene> GetScene(String sceneName);

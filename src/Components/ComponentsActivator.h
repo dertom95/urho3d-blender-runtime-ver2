@@ -4,6 +4,7 @@
 #include "GroupInstance.h"
 #include "ParentBone.h"
 #include "RotationFix.h"
+#include "PlayAnimation.h"
 
 using namespace Urho3D;
 
@@ -21,5 +22,6 @@ void ComponentsActivator::RegisterComponents(Context *context)
 
     // custom components
     Rotator::RegisterObject(context);
+    PlayAnimation::RegisterObject(context);
    // Rotator2::RegisterObject(context);
 }
