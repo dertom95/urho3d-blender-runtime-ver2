@@ -126,6 +126,7 @@ void StartupApplication::SetupComponentExporter()
     exporter->AddComponentHashToFilterList(PhysicsWorld::GetTypeStatic());
     exporter->AddComponentHashToFilterList(DebugRenderer::GetTypeStatic());
     exporter->AddComponentHashToFilterList(Zone::GetTypeStatic());
+    exporter->AddComponentHashToFilterList(LuaScriptInstance::GetTypeStatic());
     exporter->AddComponentHashToFilterList(AnimationController::GetTypeStatic());
 }
 
