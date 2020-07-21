@@ -44,7 +44,7 @@ set (TARGET_NAME ${PROJECT_NAME})
 option(GAME_ENABLE_DEBUG_TOOLS "Enable Debug-Tools(Editor,Console,Profiler)" ON)
 option(GAME_ENABLE_COMPONENT_EXPORTER "Enable Component-Export as JSON" ON)
 option(GAME_RETRIEVE_GIT_HASH "Retrieve current-githash" ON)
-option(GAME_DEBUGGING "Active GAME_DEBUGGING-Define" ON)
+option(GAME_DEBUGGING "Active GAME_DEBUGGING-Define" OFF)
 
 set(GIT_HASH "unknown")
 

@@ -62,4 +62,5 @@ private:
     SharedPtr<UIElement> mUiRoot;
     SharedPtr<DropDownList> mUIExportPaths;
     SharedPtr<DropDownList> mUIViewIds;
+    SharedPtr<DebugRenderer> mDebugRenderer;
 };

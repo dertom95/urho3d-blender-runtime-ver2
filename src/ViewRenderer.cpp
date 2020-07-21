@@ -149,6 +149,10 @@ void ViewRenderer::HandleSceneUpdate(StringHash eventType, VariantMap &eventdata
     String sceneName = eventdata[P_SCENE_NAME].GetString();
     Scene* scene = eventdata[P_SCENE].GetCustom<Scene*>();
     if (currentScene_ == scene) {
+        auto navMesh = scene->GetDerivedComponent<NavigationMesh>(true);
+        if (navMesh){
+            navMesh->Build();
+        }
         GetSubsystem<BlenderRuntime>()->UpdateViewRenderer(this);
     }
 
@@ -158,8 +162,13 @@ void ViewRenderer::RequestRender()
 {
     if (parent->renderSettings.showPhysics){
         PhysicsWorld* pw = currentScene_->GetOrCreateComponent<PhysicsWorld>();
-        currentScene_->GetOrCreateComponent<DebugRenderer>();
+        auto dr = currentScene_->GetOrCreateComponent<DebugRenderer>();
         pw->DrawDebugGeometry(parent->renderSettings.showPhysicsDepth);
+
+        auto navigationMesh = currentScene_->GetDerivedComponent<NavigationMesh>(true);
+        if (navigationMesh){
+            navigationMesh->DrawDebugGeometry(dr,false);
+        }
     }
     renderSurface_->QueueUpdate();
 }

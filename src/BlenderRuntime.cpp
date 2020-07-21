@@ -179,6 +179,11 @@ SharedPtr<Scene> BlenderExportPath::GetScene(String sceneName)
     mScenes[sceneName]=newScene;
     mResourceCache->ReloadResourceWithDependencies(sceneName);
 
+    auto navMesh = newScene->GetDerivedComponent<NavigationMesh>(true);
+    if (navMesh){
+        navMesh->Build();
+    }
+
     using namespace BlenderSceneUpdated;
     VariantMap data;
     data[P_SCENE_NAME]=sceneName;
@@ -506,7 +511,6 @@ void BlenderRuntime::HandleUpdate(StringHash eventType, VariantMap &eventData)
 
 void BlenderRuntime::UpdateViewRenderer(ViewRenderer *view)
 {
-
     Renderer* renderer = GetSubsystem<Renderer>();
     if (view->GetViewport() != renderer->GetViewport(0)){
         renderer->SetViewport(0,view->GetViewport());
