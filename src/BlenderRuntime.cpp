@@ -177,6 +177,7 @@ SharedPtr<Scene> BlenderExportPath::GetScene(String sceneName)
     newScene->LoadXML(*file);
 
     mScenes[sceneName]=newScene;
+    newScene->SetName(sceneName);
     mResourceCache->ReloadResourceWithDependencies(sceneName);
 
     auto navMesh = newScene->GetDerivedComponent<NavigationMesh>(true);

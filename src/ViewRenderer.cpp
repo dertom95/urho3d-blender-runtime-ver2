@@ -42,7 +42,6 @@ void ViewRenderer::SetScene(Scene *scene)
 
     currentScene_ = scene;
     currentScene_->SetUpdateEnabled(false);
-
     if (viewport_){
         viewport_->SetScene(scene);
         //renderSurface_->QueueUpdate();
@@ -148,14 +147,14 @@ void ViewRenderer::HandleSceneUpdate(StringHash eventType, VariantMap &eventdata
     using namespace BlenderSceneUpdated;
     String sceneName = eventdata[P_SCENE_NAME].GetString();
     Scene* scene = eventdata[P_SCENE].GetCustom<Scene*>();
-    if (currentScene_ == scene) {
-        auto navMesh = scene->GetDerivedComponent<NavigationMesh>(true);
+
+    if (currentScene_ == scene || (currentScene_ && currentScene_->GetName()==sceneName)) {
+        auto navMesh = currentScene_->GetDerivedComponent<NavigationMesh>(true);
         if (navMesh){
             navMesh->Build();
         }
         GetSubsystem<BlenderRuntime>()->UpdateViewRenderer(this);
     }
-
 }
 
 void ViewRenderer::RequestRender()
