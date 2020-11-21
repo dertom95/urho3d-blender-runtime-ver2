@@ -159,10 +159,10 @@ void ViewRenderer::HandleSceneUpdate(StringHash eventType, VariantMap &eventdata
 
 void ViewRenderer::RequestRender()
 {
-    if (parent->renderSettings.showPhysics){
+    if (parent->sessionSettings.showPhysics){
         PhysicsWorld* pw = currentScene_->GetOrCreateComponent<PhysicsWorld>();
         auto dr = currentScene_->GetOrCreateComponent<DebugRenderer>();
-        pw->DrawDebugGeometry(parent->renderSettings.showPhysicsDepth);
+        pw->DrawDebugGeometry(parent->sessionSettings.showPhysicsDepth);
 
         auto navigationMesh = currentScene_->GetDerivedComponent<NavigationMesh>(true);
         if (navigationMesh){

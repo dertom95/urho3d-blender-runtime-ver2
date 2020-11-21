@@ -35,6 +35,10 @@ void Urho3DNodeTreeExporter::AddSuperComponentHashToFilterList(const StringHash&
 
 bool Urho3DNodeTreeExporter::CheckSuperTypes(const TypeInfo* type)
 {
+    if (m_listOfSuperClasses.Size()==0){
+        return false;
+    }
+
     for (auto superType : m_listOfSuperClasses){
         if (!type->IsTypeOf(superType)){
             return false;
@@ -130,6 +134,24 @@ void Urho3DNodeTreeExporter::ProcessFileSystem()
                 p.absFilepath = dir +"/"+foundTexture;
                 p.resFilepath = path+"/"+foundTexture;
                 textureFiles.Push(p);
+            }
+
+            File file(context_);
+            fs->ScanDir(dirFiles,dir,"*.xml",SCAN_FILES,true);
+            for (String foundTexture : dirFiles){
+                TextureExportPath p;
+                p.absFilepath = dir +"/"+foundTexture;
+                p.resFilepath = path+"/"+foundTexture;
+
+                file.Open(p.absFilepath);
+                String allText="";
+                while (!file.IsEof()){
+                    String line = file.ReadLine();
+                    if (line.ToUpper()=="<CUBEMAP>"){
+                        textureFiles.Push(p);
+                    }
+                    break;
+                }
             }
         }
 
@@ -375,7 +397,7 @@ JSONObject Urho3DNodeTreeExporter::ExportMaterials()
         for (TextureExportPath texture : textureFiles){
             StringHash hash(texture.resFilepath);
             String id(hash.Value() % 10000000);
-
+            counter++;
             NodeAddEnumElement(enumElems,texture.resFilepath,texture.resFilepath,texture.absFilepath,"COLOR",id);
         }
         NodeAddPropEnum(textureNode,"Texture",enumElems,true,"0",true);
@@ -538,6 +560,13 @@ void Urho3DNodeTreeExporter::NodeAddOutputSocket(JSONObject &node, const String 
     NodeAddSocket(node,name,type,false);
 }
 
+void Urho3DNodeTreeExporter::ClearFilters()
+{
+    m_listOfComponents.Clear();
+    m_listOfSuperClasses.Clear();
+    SetExportMode(BlackList);
+}
+
 String  Urho3DNodeTreeExporter::GetTypeCategory(const StringHash& hash,const String& defaultValue){
     const HashMap<String, Vector<StringHash> >& objectCategories = context_->GetObjectCategories();
     for (HashMap<String, Vector<StringHash> >::ConstIterator i = objectCategories.Begin(); i != objectCategories.End(); ++i)
@@ -568,6 +597,10 @@ JSONObject Urho3DNodeTreeExporter::ExportComponents()
     for (unsigned i = 0; i < values.Size(); ++i)
     {
         SharedPtr<ObjectFactory> val = values.At(i);
+
+        int compAmount = m_listOfComponents.Size();
+        bool compContains = m_listOfComponents.Contains(val->GetType());
+        bool superTypeContains = CheckSuperTypes(val->GetTypeInfo());
 
         // apply black- /whitelist-Filter
         if (    (InBlacklistMode() && (m_listOfComponents.Contains(val->GetType()) || CheckSuperTypes(val->GetTypeInfo())) )
@@ -708,6 +741,25 @@ JSONObject Urho3DNodeTreeExporter::ExportComponents()
                                 alreadyAdded = true;
 
                             }
+                            else if (typeName == "TextureCube")
+                            {
+                                // dropdown to choose textures available from the resource-path
+                                JSONArray enumElems;
+                                NodeAddEnumElement(enumElems,"none","None","No Texture","TEXTURE");
+
+                                for (TextureExportPath tex : textureFiles){
+                                    if (tex.resFilepath.EndsWith(".xml")){
+                                        StringHash hash(tex.resFilepath);
+                                        String id(hash.Value() % 10000000);
+
+                                        NodeAddEnumElement(enumElems,"TextureCube;"+tex.resFilepath,tex.resFilepath,tex.absFilepath,"TEXTURE",id);
+                                    }
+                                }
+
+                                NodeAddPropEnum(node,attr.name_,enumElems,true,"0");
+                                alreadyAdded = true;
+
+                            }
                             else if (typeName == "Material")
                             {
                                 // dropdown to choose techniques available from the resource-path
@@ -772,6 +824,14 @@ JSONObject Urho3DNodeTreeExporter::ExportGlobalData(){
         NodeAddEnumElement(textures,texture.resFilepath,texture.resFilepath,texture.absFilepath,"COLOR",id);
     }
     globalData["textures"] = textures;
+
+    JSONArray models;
+    for (String modelName : modelFiles){
+        StringHash hash(modelName);
+        String id(hash.Value() % 10000000);
+        NodeAddEnumElement(models,modelName,modelName,"Model "+modelName,"COLOR",id);
+    }
+    globalData["models"] = models;
 
     return globalData;
 }

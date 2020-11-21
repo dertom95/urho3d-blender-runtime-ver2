@@ -22,10 +22,16 @@ URHO3D_EVENT(E_BLENDER_SCENE_UPDATED, BlenderSceneUpdated)
     URHO3D_PARAM(P_SCENE, Scene); // ptr
 }
 
-struct RenderSettings {
+enum class ExportComponentMode {
+    none=0,lite=1,all=2
+};
+
+struct SessionSettings {
     bool showPhysics;
     bool showPhysicsDepth;
     bool activatePhysics;
+
+    ExportComponentMode exportComponentMode;
 };
 
 
@@ -36,16 +42,25 @@ public:
     inline SharedPtr<ResourceCache> GetResourceCache() { return mResourceCache; }
 
     SharedPtr<Scene> GetScene(String sceneName);
+
+    Urho3DNodeTreeExporter* mMaterialExporter;
+
+    void SetExportMode(ExportComponentMode mode);
+    void RequestExport();
 private:
     void HandleResourcesChanged(StringHash eventType,VariantMap& eventdata);
+    void HandleUpdate(StringHash eventType,VariantMap& eventdata);
 
     void ExportMaterials();
 
+    ExportComponentMode mComponentExportMode;
     String mExportPath;
     String mExportMaterialsPath;
     HashMap<String,SharedPtr<Scene>> mScenes;
     SharedPtr<ResourceCache> mResourceCache;
-    Urho3DNodeTreeExporter* mMaterialExporter;
+    HashSet<String> knownResources;
+    bool mRequestedTreeExport;
+    float mRequestTimer;
 };
 
 
@@ -58,18 +73,19 @@ public:
 
     ViewRenderer* GetOrCreateView(int viewId);
     inline int GetSessionId() { return mSessionId; }
-
     void SetExportPath(SharedPtr<BlenderExportPath> exportPath);
-    SharedPtr<Scene> SetScene(String sceneName);
-    RenderSettings renderSettings;
     void Ping();
     inline float GetLastPing(){ return mLastPing;}
     void UpdateSessionViewRenderers();
+
+    SharedPtr<Scene> SetScene(String sceneName);
+
+    SessionSettings sessionSettings;
+    SharedPtr<BlenderExportPath> mCurrentExportpath;
 private:
     int mSessionId;
     String mCurrentSceneName;
     SharedPtr<Scene> mCurrentScene;
-    SharedPtr<BlenderExportPath> mCurrentExportpath;
     HashMap<int,ViewRenderer*> mSessionRenderers; // every window that should be rendered with Urho3D-Renderer
     float mLastPing;
 };

@@ -89,7 +89,7 @@ void BlenderNetwork::CheckNetwork()
         Vector<String> topicSplit = String(_topic.c_str()).Split(' ');
 
         if (topicSplit.Size() != 3){
-            URHO3D_LOGERRORF("BlenderNetwork: WRONG TOPIC-FORMAT! %s",_topic);
+            URHO3D_LOGERRORF("BlenderNetwork: WRONG TOPIC-FORMAT! %s",_topic.c_str());
             return;
         }
 

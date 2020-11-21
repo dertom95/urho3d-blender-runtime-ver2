@@ -108,13 +108,6 @@ void StartupApplication::SetupComponentExporter()
     // explicitly export those components
     exporter->AddComponentHashToFilterList(Light::GetTypeStatic());
     exporter->AddComponentHashToFilterList(Camera::GetTypeStatic());
-
-    exporter->AddMaterialFolder("Materials");
-    exporter->AddTechniqueFolder("Techniques");
-    exporter->AddTextureFolder("Textures");
-    exporter->AddModelFolder("Models");
-    exporter->AddAnimationFolder("Models");
-
     exporter->AddComponentHashToFilterList(RigidBody::GetTypeStatic());
     exporter->AddComponentHashToFilterList(CollisionShape::GetTypeStatic());
     exporter->AddComponentHashToFilterList(Navigable::GetTypeStatic());
@@ -128,6 +121,14 @@ void StartupApplication::SetupComponentExporter()
     exporter->AddComponentHashToFilterList(Zone::GetTypeStatic());
     exporter->AddComponentHashToFilterList(LuaScriptInstance::GetTypeStatic());
     exporter->AddComponentHashToFilterList(AnimationController::GetTypeStatic());
+
+    exporter->AddMaterialFolder("Materials");
+    exporter->AddTechniqueFolder("Techniques");
+    exporter->AddTextureFolder("Textures");
+    exporter->AddModelFolder("Models");
+    exporter->AddAnimationFolder("Models");
+
+
 }
 
 void StartupApplication::ExportComponents(const String& outputPath)

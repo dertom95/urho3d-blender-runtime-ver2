@@ -83,7 +83,10 @@ void BlenderSession::UpdateSessionViewRenderers()
 
 BlenderExportPath::BlenderExportPath(Context *ctx, String exportPath, bool createResourceCache)
     : Object(ctx),
-      mExportPath(exportPath)
+      mExportPath(exportPath),
+      mRequestedTreeExport(false),
+      mRequestTimer(0.0f),
+      mComponentExportMode(ExportComponentMode::none)
 {
     if (createResourceCache){
         mResourceCache = new ResourceCache(ctx);
@@ -109,10 +112,53 @@ BlenderExportPath::BlenderExportPath(Context *ctx, String exportPath, bool creat
     mMaterialExporter->AddModelFolder("Models");
     mMaterialExporter->AddAnimationFolder("Models");
     mMaterialExporter->SetResourceCache(mResourceCache);
+
     // export materials right aways
     ExportMaterials();
 
     SubscribeToEvent(mResourceCache,E_FILECHANGED,URHO3D_HANDLER(BlenderExportPath,HandleResourcesChanged));
+    SubscribeToEvent(E_UPDATE,URHO3D_HANDLER(BlenderExportPath,HandleUpdate));
+}
+
+void BlenderExportPath::SetExportMode(ExportComponentMode mode)
+{
+    mComponentExportMode = mode;
+
+    mMaterialExporter->ClearFilters();
+
+    if (mode == ExportComponentMode::lite){
+        mMaterialExporter->SetExportMode(Urho3DNodeTreeExporter::WhiteList);
+        // include all Components that inherit from LogicComponent
+        mMaterialExporter->AddSuperComponentHashToFilterList(LogicComponent::GetTypeStatic());
+        // explicitly export those components
+        mMaterialExporter->AddComponentHashToFilterList(Light::GetTypeStatic());
+        mMaterialExporter->AddComponentHashToFilterList(Camera::GetTypeStatic());
+        mMaterialExporter->AddComponentHashToFilterList(RigidBody::GetTypeStatic());
+        mMaterialExporter->AddComponentHashToFilterList(CollisionShape::GetTypeStatic());
+        mMaterialExporter->AddComponentHashToFilterList(Navigable::GetTypeStatic());
+        mMaterialExporter->AddComponentHashToFilterList(NavArea::GetTypeStatic());
+        mMaterialExporter->AddComponentHashToFilterList(NavigationMesh::GetTypeStatic());
+        mMaterialExporter->AddComponentHashToFilterList(CrowdAgent::GetTypeStatic());
+        mMaterialExporter->AddComponentHashToFilterList(Obstacle::GetTypeStatic());
+        mMaterialExporter->AddComponentHashToFilterList(Octree::GetTypeStatic());
+        mMaterialExporter->AddComponentHashToFilterList(PhysicsWorld::GetTypeStatic());
+        mMaterialExporter->AddComponentHashToFilterList(DebugRenderer::GetTypeStatic());
+        mMaterialExporter->AddComponentHashToFilterList(Zone::GetTypeStatic());
+        mMaterialExporter->AddComponentHashToFilterList(LuaScriptInstance::GetTypeStatic());
+        mMaterialExporter->AddComponentHashToFilterList(AnimationController::GetTypeStatic());
+    }
+    else if (mode == ExportComponentMode::all) {
+        mMaterialExporter->SetExportMode(Urho3DNodeTreeExporter::BlackList);
+    }
+    // set whitelist-mode to tell the exporter what components exactly to include for export
+
+    RequestExport();
+}
+
+void BlenderExportPath::RequestExport()
+{
+    mRequestTimer=1.0f;
+    mRequestedTreeExport=true;
 }
 
 void BlenderExportPath::HandleResourcesChanged(StringHash eventType, VariantMap &eventdata)
@@ -148,10 +194,16 @@ void BlenderExportPath::HandleResourcesChanged(StringHash eventType, VariantMap 
         }
     }
 
-    if (resName.EndsWith("png") || resName.EndsWith("jpg") || resName.EndsWith("dds")){
-        // textures changed
-        ExportMaterials();
+    if (!knownResources.Contains(resName)){
+        knownResources.Insert(resName);
+        RequestExport();
     }
+
+//    if (resName.EndsWith("png") || resName.EndsWith("jpg") || resName.EndsWith("dds"))
+//    {
+//        // textures changed
+
+//    }
 }
 
 SharedPtr<Scene> BlenderExportPath::GetScene(String sceneName)
@@ -194,9 +246,24 @@ SharedPtr<Scene> BlenderExportPath::GetScene(String sceneName)
     return SharedPtr<Scene>(newScene);
 }
 
+void BlenderExportPath::HandleUpdate(StringHash eventType,VariantMap& data)
+{
+    if (mRequestedTreeExport){
+        using namespace Update;
+        float dt = data[P_TIMESTEP].GetFloat();
+        mRequestTimer -= dt;
+
+        if (mRequestTimer < 0){
+            ExportMaterials();
+            mRequestedTreeExport=false;
+        }
+    }
+}
+
 void BlenderExportPath::ExportMaterials()
 {
-    mMaterialExporter->Export(mExportMaterialsPath,false,true);
+
+    mMaterialExporter->Export(mExportMaterialsPath,mComponentExportMode>ExportComponentMode::none,true);
 }
 
 // ---------------------------- Runtime ------------------------------------
@@ -283,9 +350,16 @@ void BlenderRuntime::HandleBlenderMessage(StringHash eventType, VariantMap &even
             int session_id = json["session_id"].GetInt();
             BlenderSession* session = GetOrCreateSession(session_id);
 
-            session->renderSettings.showPhysics = json["show_physics"].GetBool();
-            session->renderSettings.showPhysicsDepth = json["show_physics_depth"].GetBool();
-            session->renderSettings.activatePhysics = json["activate_physics"].GetBool();
+            session->sessionSettings.showPhysics = json["show_physics"].GetBool();
+            session->sessionSettings.showPhysicsDepth = json["show_physics_depth"].GetBool();
+            session->sessionSettings.activatePhysics = json["activate_physics"].GetBool();
+
+            int componentExportMode = json["export_component_mode"].GetInt(0);
+            session->sessionSettings.exportComponentMode = (ExportComponentMode)componentExportMode;
+
+            if (session->mCurrentExportpath && session->mCurrentExportpath->mMaterialExporter){
+                session->mCurrentExportpath->SetExportMode(session->sessionSettings.exportComponentMode);
+            }
 
             session->UpdateSessionViewRenderers();
         }

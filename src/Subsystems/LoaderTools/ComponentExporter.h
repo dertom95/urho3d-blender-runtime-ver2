@@ -43,6 +43,7 @@ public:
     void AddModelFolder(const String& folder);
     inline void SetResourceCache(SharedPtr<ResourceCache> resCache) { m_resourceCache = resCache; }
     void Export(String filename,bool exportComponentTree=true,bool exportMaterialTree=true);
+    void ClearFilters();
 
     JSONObject ExportComponents();
     JSONObject ExportMaterials();
