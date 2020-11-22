@@ -65,6 +65,7 @@ if (GAME_RETRIEVE_GIT_HASH)
     endif()
 endif()
 
+source_group("Source" ${PROJECT_SOURCE_DIR})
 
 # get all source files
 file( GLOB_RECURSE SOURCE_FILES FOLLOW_SYMLINKS ${CMAKE_CURRENT_SOURCE_DIR} src/*.cpp src/*.h src/*.hpp)

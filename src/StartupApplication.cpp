@@ -5,6 +5,7 @@
 #include <Urho3D/Urho3DAll.h>
 
 #include "Components/ComponentsActivator.h"
+#include "Subsystems/PackageTool.h"
 
 URHO3D_DEFINE_APPLICATION_MAIN(StartupApplication)
 
@@ -99,6 +100,9 @@ void StartupApplication::SetupComponentExporter()
 {
     auto exporter = new Urho3DNodeTreeExporter(context_);
     context_->RegisterSubsystem(exporter);
+
+    auto packageTool = new PackageTool(context_);
+    context_->RegisterSubsystem(packageTool);
 
     // set whitelist-mode to tell the exporter what components exactly to include for export
     exporter->SetExportMode(Urho3DNodeTreeExporter::WhiteList);

@@ -52,6 +52,10 @@ bool CompareString(const String& a,const String& b){
     return a < b;
 }
 
+bool CompareTexturePath(const TextureExportPath& a,const TextureExportPath& b){
+    return a.resFilepath < b.resFilepath;
+}
+
 void Urho3DNodeTreeExporter::ProcessFileSystem()
 {
     ResourceCache* cache = m_resourceCache;
@@ -159,7 +163,7 @@ void Urho3DNodeTreeExporter::ProcessFileSystem()
 
     Sort(materialFiles.Begin(),materialFiles.End(),CompareString);
     Sort(techniqueFiles.Begin(),techniqueFiles.End(),CompareString);
-   // Sort(textureFiles.Begin(),techniqueFiles.End(),CompareString);
+    Sort(textureFiles.Begin(),textureFiles.End(),CompareTexturePath);
     Sort(modelFiles.Begin(),modelFiles.End(),CompareString);
     Sort(animationFiles.Begin(),animationFiles.End(),CompareString);
 }

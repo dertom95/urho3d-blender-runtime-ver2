@@ -5,6 +5,7 @@
 #include "Subsystems/BlenderNetworkEvents.h"
 #include "Subsystems/BlenderNetwork.h"
 #include <project_options.h>
+#include "Subsystems/PackageTool.h"
 
 #include "ViewRenderer.h"
 
@@ -364,6 +365,17 @@ void BlenderRuntime::HandleBlenderMessage(StringHash eventType, VariantMap &even
             }
 
             session->UpdateSessionViewRenderers();
+        }
+        else if (subtype == "packagetool"){
+            auto d = eventData[P_DATA];
+            JSONObject json  =  d.GetCustom<JSONObject>();
+
+            String packageFolder = json["package_folder"].GetString();
+            String packageOutput = json["package_name"].GetString();
+
+            auto packageTool = context_->GetSubsystem<PackageTool>();
+            //packageTool->WritePackageFile(packageOutput,packageFolder);
+            packageTool->Run({packageFolder,packageOutput,"-c"});
         }
         else if (subtype == "ping") {
             BlenderNetwork* bN = GetSubsystem<BlenderNetwork>();

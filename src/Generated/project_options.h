@@ -4,4 +4,4 @@
 /* #undef GAME_DEBUGGING */
 
 #define PROJECT_NAME "urho3d-blender-runtime"
-#define GIT_HASH "d73fca9"
+#define GIT_HASH "33d8700"
