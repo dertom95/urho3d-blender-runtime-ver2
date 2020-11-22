@@ -13,6 +13,7 @@ ViewRenderer::ViewRenderer(Context* ctx, SharedPtr<BlenderSession> parent_, int 
       renderTexture_(nullptr),
       orthosize_(0),
       orthoMode_(false),
+      inPBRMode_(false),
       ctx_(ctx),
       parent(parent_)
 {
@@ -101,6 +102,39 @@ void ViewRenderer::SetViewMatrix(const Matrix4 &vmat)
     SetViewMatrix(t,r,s);
 }
 
+void ViewRenderer::SetPBR(bool enable){
+    if (inPBRMode_ == enable){
+        return; // already in this mode
+    }
+
+    inPBRMode_=enable;
+    if (enable){
+        auto renderer = context_->GetSubsystem<Renderer>();
+        renderer->SetHDRRendering(true);
+
+        // Set up a viewport to the Renderer subsystem so that the 3D scene can be seen
+
+        nonPBRPath_=viewport_->GetRenderPath()->Clone();
+
+        auto cache = context_->GetSubsystem<ResourceCache>();
+
+        // Add post-processing effects appropriate with the example scene
+        SharedPtr<RenderPath> effectRenderPath = viewport_->GetRenderPath()->Clone();
+        effectRenderPath->Append(cache->GetResource<XMLFile>("PostProcess/FXAA2.xml"));
+        effectRenderPath->Append(cache->GetResource<XMLFile>("PostProcess/GammaCorrection.xml"));
+        effectRenderPath->Append(cache->GetResource<XMLFile>("PostProcess/Tonemap.xml"));
+        effectRenderPath->Append(cache->GetResource<XMLFile>("PostProcess/AutoExposure.xml"));
+        viewport_->SetRenderPath(effectRenderPath);
+    } else {
+        auto renderer = context_->GetSubsystem<Renderer>();
+        renderer->SetHDRRendering(false);
+
+        if (nonPBRPath_){
+            viewport_->SetRenderPath(nonPBRPath_);
+        }
+    }
+}
+
 
 void ViewRenderer::SetViewMatrix(const Vector3& t,const Vector3& r,const Vector3& s)
 {
@@ -133,6 +167,7 @@ void ViewRenderer::SetSize(int width, int height, float fov)
 
     bool result = renderTexture_->SetSize(width,height,Graphics::GetRGBAFormat(), TEXTURE_RENDERTARGET);
     renderTexture_->SetFilterMode(FILTER_BILINEAR);
+
     renderSurface_ = renderTexture_->GetRenderSurface();
 
     // TODO: memory-leak? what happens with the viewport. Do I need to delete this on my own?
@@ -169,6 +204,9 @@ void ViewRenderer::RequestRender()
             navigationMesh->DrawDebugGeometry(dr,false);
         }
     }
+
+    SetPBR(parent->sessionSettings.activatePBR);
+
     renderSurface_->QueueUpdate();
 }
 

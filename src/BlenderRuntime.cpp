@@ -75,6 +75,7 @@ void BlenderSession::UpdateSessionViewRenderers()
     BlenderRuntime* rt = GetSubsystem<BlenderRuntime>();
 
     for (ViewRenderer* vr: mSessionRenderers.Values()){
+        vr->SetPBR(vr);
         rt->UpdateViewRenderer(vr);
     }
 }
@@ -353,6 +354,7 @@ void BlenderRuntime::HandleBlenderMessage(StringHash eventType, VariantMap &even
             session->sessionSettings.showPhysics = json["show_physics"].GetBool();
             session->sessionSettings.showPhysicsDepth = json["show_physics_depth"].GetBool();
             session->sessionSettings.activatePhysics = json["activate_physics"].GetBool();
+            session->sessionSettings.activatePBR = json["activate_pbr"].GetBool();
 
             int componentExportMode = json["export_component_mode"].GetInt(0);
             session->sessionSettings.exportComponentMode = (ExportComponentMode)componentExportMode;
