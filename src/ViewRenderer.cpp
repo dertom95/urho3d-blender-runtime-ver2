@@ -13,7 +13,7 @@ ViewRenderer::ViewRenderer(Context* ctx, SharedPtr<BlenderSession> parent_, int 
       renderTexture_(nullptr),
       orthosize_(0),
       orthoMode_(false),
-      inPBRMode_(false),
+      renderPath_("RenderPaths/Forward.xml"),
       ctx_(ctx),
       parent(parent_)
 {
@@ -102,38 +102,6 @@ void ViewRenderer::SetViewMatrix(const Matrix4 &vmat)
     SetViewMatrix(t,r,s);
 }
 
-void ViewRenderer::SetPBR(bool enable){
-    if (inPBRMode_ == enable){
-        return; // already in this mode
-    }
-
-    inPBRMode_=enable;
-    if (enable){
-        auto renderer = context_->GetSubsystem<Renderer>();
-        renderer->SetHDRRendering(true);
-
-        // Set up a viewport to the Renderer subsystem so that the 3D scene can be seen
-
-        nonPBRPath_=viewport_->GetRenderPath()->Clone();
-
-        auto cache = context_->GetSubsystem<ResourceCache>();
-
-        // Add post-processing effects appropriate with the example scene
-        SharedPtr<RenderPath> effectRenderPath = viewport_->GetRenderPath()->Clone();
-        effectRenderPath->Append(cache->GetResource<XMLFile>("PostProcess/FXAA2.xml"));
-        effectRenderPath->Append(cache->GetResource<XMLFile>("PostProcess/GammaCorrection.xml"));
-        effectRenderPath->Append(cache->GetResource<XMLFile>("PostProcess/Tonemap.xml"));
-        effectRenderPath->Append(cache->GetResource<XMLFile>("PostProcess/AutoExposure.xml"));
-        viewport_->SetRenderPath(effectRenderPath);
-    } else {
-        auto renderer = context_->GetSubsystem<Renderer>();
-        renderer->SetHDRRendering(false);
-
-        if (nonPBRPath_){
-            viewport_->SetRenderPath(nonPBRPath_);
-        }
-    }
-}
 
 
 void ViewRenderer::SetViewMatrix(const Vector3& t,const Vector3& r,const Vector3& s)
@@ -205,7 +173,10 @@ void ViewRenderer::RequestRender()
         }
     }
 
-    SetPBR(parent->sessionSettings.activatePBR);
+    RenderPath* rp = new RenderPath();
+    auto cache = context_->GetSubsystem<ResourceCache>();
+    rp->Load(cache->GetResource<XMLFile>(renderPath_));
+    viewport_->SetRenderPath(rp);
 
     renderSurface_->QueueUpdate();
 }

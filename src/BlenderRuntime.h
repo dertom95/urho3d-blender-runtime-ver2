@@ -30,7 +30,7 @@ struct SessionSettings {
     bool showPhysics;
     bool showPhysicsDepth;
     bool activatePhysics;
-    bool activatePBR;
+    String renderPath;
 
     ExportComponentMode exportComponentMode;
 };

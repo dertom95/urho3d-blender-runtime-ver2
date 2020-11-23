@@ -38,6 +38,7 @@ public:
 
     void AddMaterialFolder(const String& folder);
     void AddTechniqueFolder(const String& folder);
+    void AddRenderPathFolder(const String& folder);
     void AddTextureFolder(const String& folder);
     void AddAnimationFolder(const String& folder);
     void AddModelFolder(const String& folder);
@@ -84,6 +85,7 @@ private:
     HashSet<StringHash> m_listOfSuperClasses;
     Vector<String> m_materialFolders;
     Vector<String> m_techniqueFolders;
+    Vector<String> m_renderPathFolders;
     Vector<String> m_textureFolders;
     Vector<String> m_modelFolders;
     Vector<String> m_animationFolders;
@@ -91,6 +93,7 @@ private:
 
     Vector<String> materialFiles;
     Vector<String> techniqueFiles;
+    Vector<String> renderPathFiles;
     Vector<TextureExportPath> textureFiles;
     Vector<String> modelFiles;
     Vector<String> animationFiles;

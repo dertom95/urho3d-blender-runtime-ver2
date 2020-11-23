@@ -76,7 +76,7 @@ void BlenderSession::UpdateSessionViewRenderers()
     BlenderRuntime* rt = GetSubsystem<BlenderRuntime>();
 
     for (ViewRenderer* vr: mSessionRenderers.Values()){
-        vr->SetPBR(vr);
+        vr->SetRenderPath(sessionSettings.renderPath);
         rt->UpdateViewRenderer(vr);
     }
 }
@@ -113,6 +113,7 @@ BlenderExportPath::BlenderExportPath(Context *ctx, String exportPath, bool creat
     mMaterialExporter->AddTextureFolder("Textures");
     mMaterialExporter->AddModelFolder("Models");
     mMaterialExporter->AddAnimationFolder("Models");
+    mMaterialExporter->AddRenderPathFolder("RenderPaths");
     mMaterialExporter->SetResourceCache(mResourceCache);
 
     // export materials right aways
@@ -355,7 +356,7 @@ void BlenderRuntime::HandleBlenderMessage(StringHash eventType, VariantMap &even
             session->sessionSettings.showPhysics = json["show_physics"].GetBool();
             session->sessionSettings.showPhysicsDepth = json["show_physics_depth"].GetBool();
             session->sessionSettings.activatePhysics = json["activate_physics"].GetBool();
-            session->sessionSettings.activatePBR = json["activate_pbr"].GetBool();
+            session->sessionSettings.renderPath = json["renderPath"].GetString();
 
             int componentExportMode = json["export_component_mode"].GetInt(0);
             session->sessionSettings.exportComponentMode = (ExportComponentMode)componentExportMode;

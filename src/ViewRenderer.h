@@ -27,7 +27,7 @@ public:
     inline SharedPtr<Camera> GetCamera() { return viewportCamera_;}
     inline SharedPtr<Viewport> GetViewport() { return viewport_;}
     const String& GetNetId() { return netId; }
-    void SetPBR(bool enable);
+    void SetRenderPath(String renderPath) {renderPath_=renderPath;}
     void RequestRender();
     void Show();
     float fov_;
@@ -44,7 +44,7 @@ private:
     int height_;
     float orthosize_;
     bool orthoMode_;
-    bool inPBRMode_;
+    String renderPath_;
 
     Context* ctx_;
     SharedPtr<Scene> currentScene_;

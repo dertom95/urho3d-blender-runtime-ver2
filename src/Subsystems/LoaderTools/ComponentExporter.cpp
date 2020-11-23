@@ -15,6 +15,7 @@
 #include <Urho3D/Container/Str.h>
 #include <Urho3D/Core/Object.h>
 #include <Urho3D/Core/Context.h>
+#include <Urho3D/Graphics/RenderPath.h>
 
 Urho3DNodeTreeExporter::Urho3DNodeTreeExporter(Context* context, ExportMode exportMode)
     : Object(context),
@@ -95,6 +96,17 @@ void Urho3DNodeTreeExporter::ProcessFileSystem()
             }
         }
 
+        // grab techniques from the specified technique folders
+        for (String path : m_renderPathFolders){
+            String dir = resDir+path;
+            fs->ScanDir(dirFiles,dir,"*.xml",SCAN_FILES,true);
+            for (String foundRenderPath : dirFiles){
+                auto renderpathResourceName = path+"/"+foundRenderPath;
+                if (!renderPathFiles.Contains(renderpathResourceName)){
+                    renderPathFiles.Push(renderpathResourceName);
+                }
+            }
+        }
 
         // grab models from the specified model folder. all files with .mdl extension are considered a mesh
         for (String path : m_modelFolders){
@@ -163,6 +175,7 @@ void Urho3DNodeTreeExporter::ProcessFileSystem()
 
     Sort(materialFiles.Begin(),materialFiles.End(),CompareString);
     Sort(techniqueFiles.Begin(),techniqueFiles.End(),CompareString);
+    Sort(renderPathFiles.Begin(),renderPathFiles.End(),CompareString);
     Sort(textureFiles.Begin(),textureFiles.End(),CompareTexturePath);
     Sort(modelFiles.Begin(),modelFiles.End(),CompareString);
     Sort(animationFiles.Begin(),animationFiles.End(),CompareString);
@@ -515,6 +528,11 @@ void Urho3DNodeTreeExporter::AddTechniqueFolder(const String& folder)
     m_techniqueFolders.Push(folder);
 }
 
+void Urho3DNodeTreeExporter::AddRenderPathFolder(const String &folder)
+{
+    m_renderPathFolders.Push(folder);
+}
+
 void Urho3DNodeTreeExporter::AddTextureFolder(const String& folder)
 {
     m_textureFolders.Push(folder);
@@ -819,6 +837,17 @@ JSONObject Urho3DNodeTreeExporter::ExportGlobalData(){
         NodeAddEnumElement(techniques,techniqueName,techniqueName,"Technique "+techniqueName,"COLOR",id,category);
     }
     globalData["techniques"] = techniques;
+
+    JSONArray renderPaths;
+    for (String renderPathName : renderPathFiles){
+        StringHash hash(renderPathName);
+        String id(hash.Value() % 10000000);
+
+        String category = "";
+
+        NodeAddEnumElement(renderPaths,renderPathName,renderPathName,"RenderPath "+renderPathName,"COLOR",id,category);
+    }
+    globalData["renderPaths"] = renderPaths;
 
     JSONArray textures;
     for (TextureExportPath texture : textureFiles){

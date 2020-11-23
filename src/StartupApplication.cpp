@@ -131,6 +131,7 @@ void StartupApplication::SetupComponentExporter()
     exporter->AddTextureFolder("Textures");
     exporter->AddModelFolder("Models");
     exporter->AddAnimationFolder("Models");
+    exporter->AddRenderPathFolder("RenderPaths");
 
 
 }
