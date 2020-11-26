@@ -6,6 +6,6 @@ cd $DIR/..
 #rm -Rf build/*
 
 echo "native"
-script/dockerized.sh native
+script/dockerized.sh linux 
 echo "mingw"
 script/dockerized.sh mingw

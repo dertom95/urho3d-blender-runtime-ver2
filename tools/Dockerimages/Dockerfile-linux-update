@@ -1,0 +1,4 @@
+FROM dertom95/urho3d-linux:latest
+
+RUN cd /Urho3D && git pull origin master && /linux_entrypoint.sh rake cmake URHO3D_SAMPLES=0 URHO3D_DEPLOYMENT_TARGET=generic URHO3D_TOOLS=1 URHO3D_HASH_DEBUG=0 URHO3D_PROFILING=0 URHO3D_TESTING=0 
+RUN cd /Urho3D/build/dockerized-linux && /linux_entrypoint.sh && make -j $(nproc)
