@@ -22,7 +22,7 @@ ViewRenderer::ViewRenderer(Context* ctx, SharedPtr<BlenderSession> parent_, int 
     SubscribeToEvent(E_BLENDER_SCENE_UPDATED,URHO3D_HANDLER(ViewRenderer,HandleSceneUpdate));
 }
 
-void ViewRenderer::SetScene(Scene *scene)
+void ViewRenderer::SetScene(SharedPtr<Scene> scene)
 {
     if (scene == currentScene_){
         // nothing to do

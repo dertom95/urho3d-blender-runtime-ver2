@@ -48,6 +48,7 @@ public:
 
     void SetExportMode(ExportComponentMode mode);
     void RequestExport();
+    inline String GetExportPath() { return mExportPath; }
 private:
     void HandleResourcesChanged(StringHash eventType,VariantMap& eventdata);
     void HandleUpdate(StringHash eventType,VariantMap& eventdata);

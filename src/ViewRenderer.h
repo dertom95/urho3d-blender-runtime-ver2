@@ -15,7 +15,7 @@ public:
     ViewRenderer(Context* ctx,SharedPtr<BlenderSession> _parent, int id);
     void SetData(Scene* initialScene, int width,int height,float fov);
     void SetSize(int width,int height,float fov);
-    void SetScene(Scene* scene);
+    void SetScene(SharedPtr<Scene> scene);
     void SetViewMatrix(const Matrix4& vmat);
     void SetViewMatrix(const Vector3& t,const Vector3& r,const Vector3& s);
     void SetOrthoMode(const Matrix4& vmat,float size_);

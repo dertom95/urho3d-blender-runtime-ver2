@@ -353,6 +353,13 @@ void BlenderRuntime::HandleBlenderMessage(StringHash eventType, VariantMap &even
             int session_id = json["session_id"].GetInt();
             BlenderSession* session = GetOrCreateSession(session_id);
 
+            bool exportPathChanged = json.Contains("export_path") && (!session->mCurrentExportpath || session->mCurrentExportpath->GetExportPath()!=json["export_path"].GetString());
+            if (exportPathChanged){
+                String exportPath = json["export_path"].GetString();
+                SharedPtr<BlenderExportPath> bExportPath = GetOrCreateExportPath(exportPath);
+                session->SetExportPath(bExportPath);
+            }
+
             session->sessionSettings.showPhysics = json["show_physics"].GetBool();
             session->sessionSettings.showPhysicsDepth = json["show_physics_depth"].GetBool();
             session->sessionSettings.activatePhysics = json["activate_physics"].GetBool();
@@ -363,6 +370,10 @@ void BlenderRuntime::HandleBlenderMessage(StringHash eventType, VariantMap &even
 
             if (session->mCurrentExportpath && session->mCurrentExportpath->mMaterialExporter){
                 session->mCurrentExportpath->SetExportMode(session->sessionSettings.exportComponentMode);
+            }
+
+            if (exportPathChanged){
+                session->mCurrentExportpath->RequestExport();
             }
 
             session->UpdateSessionViewRenderers();
