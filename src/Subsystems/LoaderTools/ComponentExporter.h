@@ -22,6 +22,16 @@ using namespace Urho3D;
 struct TextureExportPath{
     String resFilepath;
     String absFilepath;
+
+
+    bool operator==(const TextureExportPath other) const{
+        return absFilepath==other.absFilepath;
+    }
+
+    bool operator!=(const TextureExportPath other) const{
+        return absFilepath!=other.absFilepath;
+    }
+
 };
 
 
@@ -95,6 +105,7 @@ private:
     Vector<String> techniqueFiles;
     Vector<String> renderPathFiles;
     Vector<TextureExportPath> textureFiles;
+    Vector<TextureExportPath> cubeTextureFiles;
     Vector<String> modelFiles;
     Vector<String> animationFiles;
 

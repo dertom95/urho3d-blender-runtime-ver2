@@ -66,6 +66,7 @@ void Urho3DNodeTreeExporter::ProcessFileSystem()
     materialFiles.Clear();
     techniqueFiles.Clear();
     textureFiles.Clear();
+    cubeTextureFiles.Clear();
     modelFiles.Clear();
 
     for (String resDir : cache->GetResourceDirs()){
@@ -165,6 +166,7 @@ void Urho3DNodeTreeExporter::ProcessFileSystem()
                     String line = file.ReadLine();
                     if (line.ToUpper()=="<CUBEMAP>"){
                         textureFiles.Push(p);
+                        cubeTextureFiles.Push(p);
                     }
                     break;
                 }
@@ -177,8 +179,10 @@ void Urho3DNodeTreeExporter::ProcessFileSystem()
     Sort(techniqueFiles.Begin(),techniqueFiles.End(),CompareString);
     Sort(renderPathFiles.Begin(),renderPathFiles.End(),CompareString);
     Sort(textureFiles.Begin(),textureFiles.End(),CompareTexturePath);
+    Sort(cubeTextureFiles.Begin(),cubeTextureFiles.End(),CompareTexturePath);
     Sort(modelFiles.Begin(),modelFiles.End(),CompareString);
     Sort(animationFiles.Begin(),animationFiles.End(),CompareString);
+
 }
 
 JSONObject Urho3DNodeTreeExporter::ExportMaterials()
@@ -834,7 +838,7 @@ JSONObject Urho3DNodeTreeExporter::ExportGlobalData(){
         }
 
 
-        NodeAddEnumElement(techniques,techniqueName,techniqueName,"Technique "+techniqueName,"COLOR",id,category);
+        NodeAddEnumElement(techniques,techniqueName,techniqueName,"Technique "+techniqueName,"NODE_MATERIAL",id,category);
     }
     globalData["techniques"] = techniques;
 
@@ -845,7 +849,7 @@ JSONObject Urho3DNodeTreeExporter::ExportGlobalData(){
 
         String category = "";
 
-        NodeAddEnumElement(renderPaths,renderPathName,renderPathName,"RenderPath "+renderPathName,"COLOR",id,category);
+        NodeAddEnumElement(renderPaths,renderPathName,renderPathName,"RenderPath "+renderPathName,"MATERIAL",id,category);
     }
     globalData["renderPaths"] = renderPaths;
 
@@ -854,15 +858,25 @@ JSONObject Urho3DNodeTreeExporter::ExportGlobalData(){
         StringHash hash(texture.resFilepath);
         String id(hash.Value() % 10000000);
 
-        NodeAddEnumElement(textures,texture.resFilepath,texture.resFilepath,texture.absFilepath,"COLOR",id);
+        NodeAddEnumElement(textures,texture.resFilepath,texture.resFilepath,texture.absFilepath,"TEXTURE",id);
     }
     globalData["textures"] = textures;
+
+    JSONArray cubeTextures;
+    for (TextureExportPath texture : cubeTextureFiles){
+        StringHash hash(texture.resFilepath);
+        String id(hash.Value() % 10000000);
+
+        NodeAddEnumElement(cubeTextures,texture.resFilepath,texture.resFilepath,texture.absFilepath,"MESH_CUBE",id);
+    }
+    globalData["cubeTextures"] = cubeTextures;
+
 
     JSONArray models;
     for (String modelName : modelFiles){
         StringHash hash(modelName);
         String id(hash.Value() % 10000000);
-        NodeAddEnumElement(models,modelName,modelName,"Model "+modelName,"COLOR",id);
+        NodeAddEnumElement(models,modelName,modelName,"Model "+modelName,"OUTLINER_DATA_MESH",id);
     }
     globalData["models"] = models;
 
