@@ -25,36 +25,40 @@ if [[ $# -eq 0 ]]; then echo "Usage: dockerized.sh native|mingw|android|web not:
 
 PROJECT_DIR=$(cd "${0%/*}/.." || exit 1; pwd)
 if [[ ! $DBE_TAG ]]; then
-    # If the command failed or not on a tag then use 'master' by default; TRAVIS_COMMIT should be empty for non-CI usage
-    DBE_TAG=$(git describe --exact-match "$TRAVIS_COMMIT" 2>/dev/null || echo master)
+    # If the command failed or not on a tag then use 'latest' by default; TRAVIS_COMMIT should be empty for non-CI usage
+#    DBE_TAG=$(git describe --exact-match "$TRAVIS_COMMIT" 2>/dev/null || echo latest)
+    DBE_TAG="latest"
 fi
+Platform=$1
 BuildEnvironment=-$1; shift
 BuildEnvironment=${BuildEnvironment/-base}
 
-sudo docker pull dertom95/urho3d$BuildEnvironment:$DBE_TAG
+echo DBE_TAG:$DBE_TAG
+
+#docker pull dertom95/urho3d$BuildEnvironment:$DBE_TAG
 
 # shellcheck disable=SC1083
-if [[ $(sudo docker version -f {{.Client.Version}}) =~ ^([0-9]+)\.0*([0-9]+)\. ]] && (( BASH_REMATCH[1] * 100 + BASH_REMATCH[2] >= 1809 )); then
-	echo     sudo docker run -it --rm -h fishtank \
+if [[ $(docker version -f {{.Client.Version}}) =~ ^([0-9]+)\.0*([0-9]+)\. ]] && (( BASH_REMATCH[1] * 100 + BASH_REMATCH[2] >= 1809 )); then
+	echo     docker run -it --rm -h fishtank \
         -e HOST_UID="$(id -u)" -e HOST_GID="$(id -g)" -e PROJECT_DIR="$PROJECT_DIR" $NEW_URHO3D_HOME \
         --mount type=bind,source="$PROJECT_DIR",target="$PROJECT_DIR" \
         -v $PROJECT_DIR/android/launcher-app:/Urho3D/android/launcher-app \
 	--mount source="$(id -u).urho3d_home_dir",target=/home/urho3d \
-        --name "dockerized$BuildEnvironment" \
-        "dertom95/urho3d$BuildEnvironment:$DBE_TAG" "$@"
+        --name "dockerized$BuildEnvironment-build" \
+        "dertom95/urho3d$BuildEnvironment:$DBE_TAG" script/docker_build.sh $Platform "$@"
     	
-	sudo docker run -it --rm -h fishtank \
+	docker run -it --rm -h fishtank \
         -e HOST_UID="$(id -u)" -e HOST_GID="$(id -g)" -e PROJECT_DIR="$PROJECT_DIR" $NEW_URHO3D_HOME \
         --mount type=bind,source="$PROJECT_DIR",target="$PROJECT_DIR" \
         -v $PROJECT_DIR/android/launcher-app:/Urho3D/android/launcher-app \
 	--mount source="$(id -u).urho3d_home_dir",target=/home/urho3d \
-	--name "dockerized$BuildEnvironment" \
-        "dertom95/urho3d$BuildEnvironment:$DBE_TAG" "$@"
+	--name "dockerized$BuildEnvironment-build" \
+        "dertom95/urho3d$BuildEnvironment:$DBE_TAG" script/docker_build.sh $Platform "$@"
 else
     echo "CAUTION: UNTESTED"
     echo "CAUTION: UNTESTED"
     # Fallback workaround on older Docker CLI version
-    sudo docker run -it --rm -h fishtank \
+    docker run -it --rm -h fishtank \
         -e HOST_UID="$(id -u)" -e HOST_GID="$(id -g)" -e PROJECT_DIR="$PROJECT_DIR" \
         --mount type=bind,source="$PROJECT_DIR",target="$PROJECT_DIR" \
 	--mount source="$(id -u).urho3d_home_dir",target=/home/urho3d \

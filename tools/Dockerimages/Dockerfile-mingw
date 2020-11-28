@@ -7,6 +7,7 @@ RUN cd /Urho3D/build/dockerized-mingw && /mingw_entrypoint.sh && make -j $(nproc
 ENV URHO3D_HOME=/Urho3D/build/dockerized-mingw
 
 ADD PackageTool /Urho3D/build/dockerized-mingw/bin/tool
+ADD build_scripts/build_mingw.sh /
 
 ENV MINGW_SYSROOT=/usr/x86_64-w64-mingw32
 

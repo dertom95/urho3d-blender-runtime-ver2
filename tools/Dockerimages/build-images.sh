@@ -54,8 +54,9 @@ build_image () {
 	fi
 }
 
-build_image "linux"
-build_image "mingw"
-build_image "arm"
+#build_image "linux"
+#build_image "mingw"
+#build_image "arm"
 #build_image "rpi"
 #build_image "web"
+build_image "android"

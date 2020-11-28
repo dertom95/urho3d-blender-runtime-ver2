@@ -1,9 +1,9 @@
-FROM urho3d/dockerized-web:master
+FROM urho3d/dockerized-web:latest
 
 RUN git clone https://github.com/urho3D/Urho3D.git --depth=1 
-RUN cd /Urho3D && /web_entrypoint.sh rake cmake web URHO3D_SAMPLES=0 URHO3D_TOOLS=0 URHO3D_HASH_DEBUG=0 URHO3D_PROFILING=0 URHO3D_TESTING=0 URHO3D_DEPLOYMENT_TARGET=generic 
-RUN cd /Urho3D && /web_entrypoint.sh rake make web -j $(nproc)
+RUN cd /Urho3D && /web_entrypoint.sh rake cmake URHO3D_SAMPLES=0 URHO3D_TOOLS=0 URHO3D_HASH_DEBUG=0 URHO3D_PROFILING=0 URHO3D_TESTING=0 URHO3D_DEPLOYMENT_TARGET=generic 
+RUN cd /Urho3D/build/dockerized-web && /web_entrypoint.sh make -j $(nproc)
 
-ENV URHO3D_HOME=/Urho3D/build/web
+ENV URHO3D_HOME=/Urho3D/build/dockerized-web
 
-ADD PackageTool /Urho3D/build/web/bin/tool
+ADD PackageTool /Urho3D/build/dockerized-web/bin/tool

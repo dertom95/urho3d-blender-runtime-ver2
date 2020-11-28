@@ -1,6 +1,6 @@
-FROM dertom95/urho3d-web:master
+FROM dertom95/urho3d-web:latest
 
 RUN cd /Urho3D && git pull origin master && /web_entrypoint.sh rake cmake web URHO3D_SAMPLES=0 URHO3D_TOOLS=0 URHO3D_HASH_DEBUG=0 URHO3D_PROFILING=0 URHO3D_TESTING=0 URHO3D_DEPLOYMENT_TARGET=generic 
-RUN cd /Urho3D && /web_entrypoint.sh rake make web -j $(nproc)
+RUN cd /Urho3D/build/dockerized-web && /web_entrypoint.sh make -j $(nproc)
 
 ENV EMSCRIPTEN_ROOT_PATH=/emsdk-master/upstream/emscripten

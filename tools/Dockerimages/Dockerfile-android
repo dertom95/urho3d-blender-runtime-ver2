@@ -1,41 +1,50 @@
-FROM urho3d/dockerized-android:master as builder
+FROM urho3d/dockerized-android:latest as builder
 
-RUN apt-get update 
-RUN apt-get install -y apt-transport-https ca-certificates gnupg software-properties-common wget 
-RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | sudo apt-key add - 
-RUN apt-add-repository -y 'deb https://apt.kitware.com/ubuntu/ bionic main'
-RUN apt-get update 
-RUN apt-get install -y cmake
+RUN apt-get update \
+	&& apt-get install -y apt-transport-https ca-certificates gnupg software-properties-common wget \
+	&&  wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | sudo apt-key add - \
+	&& apt-add-repository -y 'deb https://apt.kitware.com/ubuntu/ bionic main' \
+	&& echo deb http://security.ubuntu.com/ubuntu xenial-security main >> /etc/apt/sources.list \
+	&& apt-get update \
+	&& apt-get install -y cmake \
+	&& apt-get install -y ninja-build unzip \
+	&& git clone https://github.com/urho3D/Urho3D.git --depth=1 
 
-RUN apt-get install -y ninja-build
+RUN export LIB_TYPE=static && export ARCH=all && export BUILD_TYPE=both && export PLATFORM=android && export URHO3D_LIB_TYPE=STATIC && export URHO3D_SAMPLES=0 && export URHO3D_PLAYER=0 && cd /Urho3D && rake cmake && rake build && rake build
+#RUN export LIB_TYPE=static && export ARCH=all && export BUILD_TYPE=both && export PLATFORM=android && export URHO3D_LIB_TYPE=STATIC && export URHO3D_SAMPLES=0 && export URHO3D_PLAYER=0 && cd /Urho3D && rake build
 
-RUN git clone https://github.com/urho3D/Urho3D.git --depth=1 
+RUN cd /Urho3D/android/urho3d-lib/build/outputs/aar && mkdir unpack && cd unpack && unzip -o ../urho3d-lib-release.aar && unzip -o ../urho3d-lib-debug.aar
 
-RUN cd /Urho3D && ./gradlew build
+#RUN mkdir -p /Urho3D/build/android/urho3d && mkdir -p /Urho3D/build/android/Debug && \
+#    cd /Urho3D/build/android &&\ 
+#    cp -r -L /Urho3D/android/urho3d-lib/.cxx/cmake/release urho3d  && \
+#    cp -r -L /Urho3D/android/urho3d-lib/.cxx/cmake/debug urho3d && \
+#    chown -R 1000:1000 .
 
-RUN mkdir -p /Urho3D/build/android && \
-    cd /Urho3D/build/android &&\ 
-    cp -r -L /Urho3D/android/urho3d-lib/build/tree/Release . && \
-    cp -r -L /Urho3D/android/urho3d-lib/build/tree/Debug . && \
-    chown -R 1000:1000 .
+#RUN cd / 
 
-FROM urho3d/dockerized-android:master
+FROM urho3d/dockerized-android:latest
 
-RUN git clone https://github.com/urho3D/Urho3D.git --depth=1
-
-RUN chown -R 1000:1000  /Urho3D && mkdir -p /Urho3D/build
-
-COPY --from=builder /Urho3D/build/android /Urho3D/build/android
+#RUN git clone https://github.com/urho3D/Urho3D.git --depth=1
+#
+#RUN mkdir -p /Urho3D/build/android && chown -R 1000:1000  /Urho3D 
+#
+COPY --from=builder /Urho3D/android/urho3d-lib/build/outputs/aar/unpack/ /Urho3D/build/android/
 COPY --from=builder /root/.gradle /root/.gradle
 
-ENV URHO3D_HOME=/Urho3D/build/android/Release/armeabi-v7a
+#RUN apt-get install -y unzip 
+#RUN cd /Urho3D/build/android && unzip -o ../urho3d-lib-debug.aar && unzip -o ../urho3d-lib-release.aar
 
-RUN cd /Urho3D && ./gradlew tasks
+#RUN rm -Rf /Urho3D/android
+#RUN rm /Urho3D/build/urho3d-lib-release.aar /Urho3D/build/urho3d-lib-debug.aar
 
-ADD android/settings.gradle.kts /Urho3D
+#ENV URHO3D_HOME=/Urho3D/build/android/Release/armeabi-v7a
+
+ENV URHO3D_LIB_TYPE=STATIC JNI_DIR=/Urho3D/build/android
+
 ADD android/root_entrypoint.sh /
 
 ENTRYPOINT ["/root_entrypoint.sh","/android_entrypoint.sh"]
 
-CMD ["./gradlew", "-p", "ANDROID_ABI=armeabi-v7a", "build"]
+CMD ["./gradlew", "-P", "ANDROID_ABI=armeabi-v7a", "build"]
 

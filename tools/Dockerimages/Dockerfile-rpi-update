@@ -1,7 +1,7 @@
-FROM dertom95/urho3d-rpi:master
+FROM dertom95/urho3d-rpi:latest
 
 RUN cd /Urho3D && git pull origin master
 RUN cd /Urho3D && /rpi_entrypoint.sh rake cmake rpi URHO3D_SAMPLES=0 URHO3D_TOOLS=0 URHO3D_HASH_DEBUG=0 URHO3D_PROFILING=0 URHO3D_TESTING=0 URHO3D_DEPLOYMENT_TARGET=generic 
-RUN cd /Urho3D && /rpi_entrypoint.sh rake make rpi -j $(nproc)
+RUN cd /Urho3D/build/dockerized-rpi && /rpi_entrypoint.sh make -j $(nproc)
 
 ADD PackageTool /Urho3D/build/rpi/bin/tool

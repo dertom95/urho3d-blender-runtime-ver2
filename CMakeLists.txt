@@ -13,7 +13,7 @@ if (COMMAND cmake_policy)
     cmake_policy (SET CMP0063 OLD)
 endif ()
 
-include("CMake/HunterGate.cmake")
+include("cmake/HunterGate.cmake")
 
 HunterGate(
     URL "https://github.com/ruslo/hunter/archive/v0.23.214.tar.gz"
@@ -25,7 +25,7 @@ project (urho3d-blender-runtime)
 
 
 # Set CMake modules search path
-set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}  ${CMAKE_CURRENT_SOURCE_DIR}/CMake/Modules)
+set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}  ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
 # Include UrhoCommon.cmake module after setting project name
 
 set (URHO3D_PACKAGING 0 CACHE BOOL "")
@@ -71,7 +71,7 @@ source_group("Source" ${PROJECT_SOURCE_DIR})
 file( GLOB_RECURSE SOURCE_FILES FOLLOW_SYMLINKS ${CMAKE_CURRENT_SOURCE_DIR} src/*.cpp src/*.h src/*.hpp)
 
 # create configure file
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/CMake/project_options.h.in ${CMAKE_CURRENT_SOURCE_DIR}/src/Generated/project_options.h @ONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/project_options.h.in ${CMAKE_CURRENT_SOURCE_DIR}/src/Generated/project_options.h @ONLY)
 
 set(INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_SOURCE_DIR}/src/Generated ${CMAKE_CURRENT_SOURCE_DIR}/src/3rd/cppzmq )
 

@@ -20,111 +20,105 @@
 // THE SOFTWARE.
 //
 
-import java.time.Duration
-
 plugins {
     id("com.android.application")
     kotlin("android")
     kotlin("android.extensions")
-    urho3d("android")
 }
 
-repositories {
-    jcenter()
-}
-
+val kotlinVersion: String by ext
+val ndkSideBySideVersion: String by ext
+val cmakeVersion: String by ext
+val buildStagingDir: String by ext
 
 android {
-    compileSdkVersion(28)
+    ndkVersion = ndkSideBySideVersion
+    compileSdkVersion(30)
+
     defaultConfig {
-        minSdkVersion(17)
-        targetSdkVersion(28)
-        applicationId = "com.github.urho3d.launcher"
+        minSdkVersion(18)
+        targetSdkVersion(30)
+        applicationId = "io.urho3d.launcher"
         versionCode = 1
         versionName = project.version.toString()
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
-        // externalNativeBuild {
-        //     cmake {
-        //         arguments.apply {
-        //             System.getenv("ANDROID_CCACHE")?.let { add("-DANDROID_CCACHE=$it") }
-        //             add("-DGRADLE_BUILD_DIR=${findProject(":android:urho3d-lib")?.buildDir}")
-        //             addAll(listOf(
-        //                     "URHO3D_LIB_TYPE",
-        //                     // TODO: "URHO3D_PACKAGING",
-        //                     "URHO3D_ANGELSCRIPT",
-        //                     "URHO3D_LUA")
-        //                     .filter { project.hasProperty(it) }
-        //                     .map { "-D$it=${project.property(it)}" }
-        //             )
-        //             // In order to get clean module segregation, only build player/samples here
-        //             // unless it is explicitly excluded
-        //             addAll(listOf(
-        //                     "URHO3D_PLAYER",
-        //                     "URHO3D_SAMPLES")
-        //                     .map { "-D$it=${project.findProperty(it) ?: "1"}" }
-        //             )
-        //         }
-        //     }
-        // }
+        externalNativeBuild {
+            cmake {
+                arguments.apply {
+                    System.getenv("ANDROID_CCACHE")?.let { add("-D ANDROID_CCACHE=$it") }
+                    //add("-D BUILD_STAGING_DIR=${findProject(":android:urho3d-lib")!!.projectDir}/$buildStagingDir")
+                    add("-D URHO3D_PLAYER=1")
+                    // Skip building samples for 'STATIC' lib type to reduce the spacetime requirement
+                    add("-D URHO3D_SAMPLES=${if (System.getenv("URHO3D_LIB_TYPE") == "SHARED") "1" else "0"}")
+                    // Pass along matching env-vars as CMake build options
+                    addAll(project.file("../../script/.build-options")
+                        .readLines()
+                        .filterNot { listOf("URHO3D_PLAYER", "URHO3D_SAMPLES").contains(it) }
+                        .mapNotNull { variable -> System.getenv(variable)?.let { "-D $variable=$it" } }
+                    )
+                }
+            }
+        }
         splits {
             abi {
                 isEnable = project.hasProperty("ANDROID_ABI")
                 reset()
-                include(*(project.findProperty("ANDROID_ABI") as String? ?: "")
-                        .split(',').toTypedArray())
+                include(
+                    *(project.findProperty("ANDROID_ABI") as String? ?: "")
+                        .split(',')
+                        .toTypedArray()
+                )
             }
         }
     }
     buildTypes {
         named("release") {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
+    }
+    lintOptions {
+        isAbortOnError = false
     }
     externalNativeBuild {
         cmake {
-            setVersion(cmakeVersion)
-            setPath(project.file("CMakeLists.txt"))
+            version = cmakeVersion
+            path = project.file("CMakeLists.txt")
+            setBuildStagingDirectory(buildStagingDir)
         }
     }
-    sourceSets {
-        getByName("main") {
-            java.srcDir("../../Source/ThirdParty/SDL/android-project/app/src/main/java")
-        }
-    }    
+
 }
 
 dependencies {
-    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
-    //implementation(project(":android:urho3d-lib"))
-    implementation(kotlin("stdlib-jdk8", kotlinVersion))
-    implementation("com.getkeepsafe.relinker:relinker:$relinkerVersion")    
-    testImplementation("junit:junit:$junitVersion")
-    androidTestImplementation("com.android.support.test:runner:$testRunnerVersion")
-    androidTestImplementation("com.android.support.test.espresso:espresso-core:$testEspressoVersion")
+    // implementation(project(":android:urho3d-lib"))
+  //  implementation("com.android.ndk.thirdparty:curl:7.68.0-alpha-1")
+  //  implementation(files("urho3d-lib-release.aar"))
+//    implementation(files("/Urho3D/build/android/classes.jar"))
+    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar", "*.aar"))))
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
+    implementation("androidx.core:core-ktx:1.3.2")
+    implementation("androidx.appcompat:appcompat:1.2.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.0.2")
+    testImplementation("junit:junit:4.13.1")
+    androidTestImplementation("androidx.test:runner:1.3.0")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.3.0")
 }
 
-// Ensure IDE "gradle sync" evaluate the urho3d-lib module first
-// evaluationDependsOn(":android:urho3d-lib")
-
-afterEvaluate {
-    // tasks {
-    //     "clean" {
-    //         doLast {
-    //             android.externalNativeBuild.cmake.path?.touch()
-    //         }
-    //     }
-    // }
-    // android.buildTypes.forEach {
-    //     val config = it.name.capitalize()
-    //     tasks {
-    //         "externalNativeBuild$config" {
-    //             mustRunAfter(":android:urho3d-lib:externalNativeBuild$config")
-    //             if (System.getenv("CI") != null) {
-    //                 @Suppress("UnstableApiUsage")
-    //                 timeout.set(Duration.ofMinutes(15))
-    //             }
-    //         }
-    //     }
-    // }
+/*afterEvaluate {
+    android.buildTypes.forEach {
+        val config = it.name.capitalize()
+        tasks {
+            "externalNativeBuild$config" {
+                mustRunAfter(":android:urho3d-lib:externalNativeBuild$config")
+            }
+        }
+    }
+}
+*/
+tasks {
+    register<Delete>("cleanAll") {
+        dependsOn("clean")
+        delete = setOf(android.externalNativeBuild.cmake.buildStagingDirectory)
+    }
 }

@@ -20,7 +20,7 @@
 // THE SOFTWARE.
 //
 
-pluginManagement {
+/*pluginManagement {
     resolutionStrategy {
         eachPlugin {
             when {
@@ -40,6 +40,6 @@ pluginManagement {
         jcenter()
     }
 }
-
+*/
 //include(":android:urho3d-lib", ":android:launcher-app")
 include(":android:launcher-app")

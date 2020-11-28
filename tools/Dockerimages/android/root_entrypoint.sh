@@ -47,7 +47,6 @@ PATH=/usr/lib/ccache:$PATH
 set -a && . /etc/default/locale && set +a
 
 # Execute the command chain (relative to project root) as urho3d
-cd /Urho3D && runuser -u root -- "$@"
+cd $PROJECT_DIR && runuser -u root -- "$@"
 
 # vi: set ts=4 sw=4 expandtab:
-
