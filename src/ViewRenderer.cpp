@@ -173,10 +173,9 @@ void ViewRenderer::RequestRender()
         }
     }
 
-    RenderPath* rp = new RenderPath();
-    auto cache = context_->GetSubsystem<ResourceCache>();
-    rp->Load(cache->GetResource<XMLFile>(renderPath_));
-    viewport_->SetRenderPath(rp);
+    if (parent->sessionSettings.renderData){
+        parent->sessionSettings.renderData->SetRenderPathOnViewport(viewport_);
+    }
 
     renderSurface_->QueueUpdate();
 }

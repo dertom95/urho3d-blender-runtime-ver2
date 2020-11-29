@@ -58,6 +58,7 @@ SharedPtr<Scene> BlenderSession::SetScene(String sceneName)
             URHO3D_LOGERRORF("Could not retrieve scene:%s",sceneName.CString());
             return nullptr;
         }
+        sessionSettings.renderData = mCurrentScene->GetComponent<RenderData>(true);
         return mCurrentScene;
     }
     return nullptr;
@@ -76,7 +77,7 @@ void BlenderSession::UpdateSessionViewRenderers()
     BlenderRuntime* rt = GetSubsystem<BlenderRuntime>();
 
     for (ViewRenderer* vr: mSessionRenderers.Values()){
-        vr->SetRenderPath(sessionSettings.renderPath);
+        vr->SetRenderPath(sessionSettings.renderData ? sessionSettings.renderData->mRenderPath : "RenderPaths/Forward.xml");
         rt->UpdateViewRenderer(vr);
     }
 }
@@ -100,8 +101,6 @@ BlenderExportPath::BlenderExportPath(Context *ctx, String exportPath, bool creat
         mResourceCache = GetSubsystem<ResourceCache>();
         mResourceCache->AddResourceDir(exportPath,0);
     }
-
-
 
     mResourceCache->SetAutoReloadResources(true);
 
@@ -177,6 +176,7 @@ void BlenderExportPath::HandleResourcesChanged(StringHash eventType, VariantMap 
 
             Scene* scene =mScenes[resName];
             scene->LoadXML(*file);
+            scene->Update(0);
 
             using namespace BlenderSceneUpdated;
             VariantMap data;
@@ -230,6 +230,7 @@ SharedPtr<Scene> BlenderExportPath::GetScene(String sceneName)
     SharedPtr<File> file = mResourceCache->GetFile(sceneName);
     //XMLFile* file = mResourceCache->GetResource<XMLFile>(sceneName);
     newScene->LoadXML(*file);
+    newScene->Update(0);
 
     mScenes[sceneName]=newScene;
     newScene->SetName(sceneName);
@@ -363,7 +364,6 @@ void BlenderRuntime::HandleBlenderMessage(StringHash eventType, VariantMap &even
             session->sessionSettings.showPhysics = json["show_physics"].GetBool();
             session->sessionSettings.showPhysicsDepth = json["show_physics_depth"].GetBool();
             session->sessionSettings.activatePhysics = json["activate_physics"].GetBool();
-            session->sessionSettings.renderPath = json["renderPath"].GetString();
 
             int componentExportMode = json["export_component_mode"].GetInt(0);
             session->sessionSettings.exportComponentMode = (ExportComponentMode)componentExportMode;

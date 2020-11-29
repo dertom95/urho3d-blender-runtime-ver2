@@ -5,6 +5,8 @@
 #include <Urho3D/Scene/Scene.h>
 #include <Urho3D/Graphics/Texture2D.h>
 
+#include "Components/RenderData.h"
+
 #include <Urho3D/UI/Window.h>
 
 #include "Subsystems/LoaderTools/ComponentExporter.h"
@@ -30,7 +32,8 @@ struct SessionSettings {
     bool showPhysics;
     bool showPhysicsDepth;
     bool activatePhysics;
-    String renderPath;
+
+    RenderData* renderData;
 
     ExportComponentMode exportComponentMode;
 };
