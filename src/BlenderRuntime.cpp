@@ -77,7 +77,10 @@ void BlenderSession::UpdateSessionViewRenderers()
     BlenderRuntime* rt = GetSubsystem<BlenderRuntime>();
 
     for (ViewRenderer* vr: mSessionRenderers.Values()){
-        vr->SetRenderPath(sessionSettings.renderData ? sessionSettings.renderData->mRenderPath : "RenderPaths/Forward.xml");
+        if (sessionSettings.renderData){
+            sessionSettings.renderData->SetRenderPathOnViewport(vr->GetViewport());
+        }
+        //vr->SetRenderPath(sessionSettings.renderData ? ->mRenderPath : "RenderPaths/Forward.xml");
         rt->UpdateViewRenderer(vr);
     }
 }
@@ -380,6 +383,7 @@ void BlenderRuntime::HandleBlenderMessage(StringHash eventType, VariantMap &even
             }
 
             session->UpdateSessionViewRenderers();
+
         }
         else if (subtype == "packagetool"){
             auto d = eventData[P_DATA];

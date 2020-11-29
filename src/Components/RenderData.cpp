@@ -25,6 +25,7 @@ void RenderData::RegisterObject(Context *context)
 }
 
 
+
 void RenderData::SetRenderPathOnViewport(Viewport* vp)
 {
     RenderPath* rp = new RenderPath();
