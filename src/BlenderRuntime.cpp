@@ -78,7 +78,7 @@ void BlenderSession::UpdateSessionViewRenderers()
 
     for (ViewRenderer* vr: mSessionRenderers.Values()){
         if (sessionSettings.renderData){
-            sessionSettings.renderData->SetRenderPathOnViewport(vr->GetViewport());
+            sessionSettings.renderData->SetRenderPathOnViewport(vr->GetViewport(),mCurrentExportpath->GetResourceCache());
         }
         //vr->SetRenderPath(sessionSettings.renderData ? ->mRenderPath : "RenderPaths/Forward.xml");
         rt->UpdateViewRenderer(vr);

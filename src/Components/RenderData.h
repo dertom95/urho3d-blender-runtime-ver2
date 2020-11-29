@@ -12,7 +12,7 @@ public:
 
     RenderData(Context* ctx);
 
-    void SetRenderPathOnViewport(Viewport* vp);
+    void SetRenderPathOnViewport(Viewport* vp,ResourceCache* cache);
 
     String mRenderPath;
     bool mEnabledGammaCorrection;
