@@ -113,6 +113,9 @@ BlenderExportPath::BlenderExportPath(Context *ctx, String exportPath, bool creat
     mMaterialExporter->AddModelFolder("Models");
     mMaterialExporter->AddAnimationFolder("Models");
     mMaterialExporter->AddRenderPathFolder("RenderPaths");
+    mMaterialExporter->AddSoundFolder("Sounds");
+    mMaterialExporter->AddSoundFolder("Nusic");
+    mMaterialExporter->AddParticleFolder("Particle");
     mMaterialExporter->SetResourceCache(mResourceCache);
 
     // export materials right aways

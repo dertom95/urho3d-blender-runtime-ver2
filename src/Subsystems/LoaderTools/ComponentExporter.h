@@ -52,6 +52,9 @@ public:
     void AddTextureFolder(const String& folder);
     void AddAnimationFolder(const String& folder);
     void AddModelFolder(const String& folder);
+    void AddParticleFolder(const String& folder);
+    void AddSoundFolder(const String& folder);
+
     inline void SetResourceCache(SharedPtr<ResourceCache> resCache) { m_resourceCache = resCache; }
     void Export(String filename,bool exportComponentTree=true,bool exportMaterialTree=true);
     void ClearFilters();
@@ -99,6 +102,9 @@ private:
     Vector<String> m_textureFolders;
     Vector<String> m_modelFolders;
     Vector<String> m_animationFolders;
+    Vector<String> m_particleFolders;
+    Vector<String> m_soundFolders;
+
     Vector<String> m_customUIFilenames;
 
     Vector<String> materialFiles;
@@ -108,6 +114,8 @@ private:
     Vector<TextureExportPath> cubeTextureFiles;
     Vector<String> modelFiles;
     Vector<String> animationFiles;
+    Vector<String> particleFiles;
+    Vector<String> soundFiles;
 
     SharedPtr<ResourceCache> m_resourceCache;
 };

@@ -171,6 +171,33 @@ void Urho3DNodeTreeExporter::ProcessFileSystem()
                     break;
                 }
             }
+
+            for (String path : m_particleFolders){
+                String dir = resDir+path;
+                fs->ScanDir(dirFiles,dir,"*.xml",SCAN_FILES,true);
+                for (String foundParticle : dirFiles){
+                    auto particleResourceName = path+"/"+foundParticle;
+                    particleFiles.Push(particleResourceName);
+                }
+            }
+
+            for (String path : m_soundFolders){
+                String dir = resDir+path;
+                fs->ScanDir(dirFiles,dir,"*.ogg",SCAN_FILES,true);
+                for (String foundSound : dirFiles){
+                    auto soundResourceName = path+"/"+foundSound;
+                    soundFiles.Push(soundResourceName);
+                }
+            }
+
+            for (String path : m_soundFolders){
+                String dir = resDir+path;
+                fs->ScanDir(dirFiles,dir,"*.wav",SCAN_FILES,true);
+                for (String foundSound : dirFiles){
+                    auto soundResourceName = path+"/"+foundSound;
+                    soundFiles.Push(soundResourceName);
+                }
+            }
         }
 
     }
@@ -552,6 +579,16 @@ void Urho3DNodeTreeExporter::AddAnimationFolder(const String& folder)
     m_animationFolders.Push(folder);
 }
 
+void Urho3DNodeTreeExporter::AddParticleFolder(const String &folder)
+{
+    m_particleFolders.Push(folder);
+}
+
+void Urho3DNodeTreeExporter::AddSoundFolder(const String &folder)
+{
+    m_soundFolders.Push(folder);
+}
+
 void Urho3DNodeTreeExporter::NodeAddSocket(JSONObject &node, const String &name, NodeSocketType type,bool isInputSocket)
 {
     String socketlistName = isInputSocket ? "inputsockets" : "outputsockets";
@@ -803,6 +840,39 @@ JSONObject Urho3DNodeTreeExporter::ExportComponents()
                                 alreadyAdded = true;
 
                             }
+                            else if (typeName == "ParticleEffect")
+                            {
+                                // dropdown to choose techniques available from the resource-path
+                                JSONArray enumElems;
+                                NodeAddEnumElement(enumElems,"none","None","No Particle","PARTICLE");
+
+                                for (String particle : particleFiles){
+                                    StringHash hash(particle);
+                                    String id(hash.Value() % 10000000);
+
+                                    NodeAddEnumElement(enumElems,"ParticleEffect;"+particle,particle,"Particle "+particle,"PARTICLE",id);
+                                }
+
+                                NodeAddPropEnum(node,attr.name_,enumElems,true,"0");
+                                alreadyAdded = true;
+
+                            }
+                            else if (typeName == "Sound") {
+                                // dropdown to choose techniques available from the resource-path
+                                JSONArray enumElems;
+                                NodeAddEnumElement(enumElems,"none","None","No Sound","SOUND");
+
+                                for (String sound : soundFiles){
+                                    StringHash hash(sound);
+                                    String id(hash.Value() % 10000000);
+
+                                    NodeAddEnumElement(enumElems,"Sound;"+sound,sound,"Sound "+sound,"Sound",id);
+                                }
+
+                                NodeAddPropEnum(node,attr.name_,enumElems,true,"0");
+                                alreadyAdded = true;
+                            }
+
                         }
                     break;
                     default:
