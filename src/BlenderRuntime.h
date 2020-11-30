@@ -36,6 +36,7 @@ struct SessionSettings {
     RenderData* renderData;
 
     ExportComponentMode exportComponentMode;
+
 };
 
 

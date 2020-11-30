@@ -31,11 +31,11 @@ public:
     void RequestRender();
     void Show();
     float fov_;
+    SharedPtr<BlenderSession> parent;
 
 private:
     void HandleSceneUpdate(StringHash eventType, VariantMap& eventdata);
 
-    SharedPtr<BlenderSession> parent;
     //WeakPtr<BlenderSession> parent;
 
     String netId;

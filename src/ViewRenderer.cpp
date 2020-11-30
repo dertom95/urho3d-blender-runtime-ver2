@@ -174,7 +174,8 @@ void ViewRenderer::RequestRender()
     }
 
     if (parent->sessionSettings.renderData){
-        parent->sessionSettings.renderData->SetRenderPathOnViewport(viewport_,parent->mCurrentExportpath->GetResourceCache());
+        context_->RegisterSubsystem(parent->mCurrentExportpath->GetResourceCache());
+        parent->sessionSettings.renderData->SetRenderPathOnViewport(viewport_);
     }
 
     renderSurface_->QueueUpdate();

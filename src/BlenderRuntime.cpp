@@ -13,11 +13,16 @@ BlenderSession::BlenderSession(Context *ctx, int sessionId)
     : Object(ctx),
       mSessionId(sessionId),
       mLastPing(0)
-{}
+{
+    sessionSettings.renderData = new RenderData(ctx);
+}
 
 BlenderSession::~BlenderSession()
 {
     URHO3D_LOGINFOF("Destruction %i",mSessionId);
+    if (sessionSettings.renderData){
+        delete sessionSettings.renderData;
+    }
 }
 
 ViewRenderer* BlenderSession::GetOrCreateView(int viewID)
@@ -58,7 +63,10 @@ SharedPtr<Scene> BlenderSession::SetScene(String sceneName)
             URHO3D_LOGERRORF("Could not retrieve scene:%s",sceneName.CString());
             return nullptr;
         }
-        sessionSettings.renderData = mCurrentScene->GetComponent<RenderData>(true);
+        auto renderData = mCurrentScene->GetComponent<RenderData>(true);
+        if (renderData){
+            sessionSettings.renderData->Read(renderData);
+        }
         return mCurrentScene;
     }
     return nullptr;
@@ -77,10 +85,6 @@ void BlenderSession::UpdateSessionViewRenderers()
     BlenderRuntime* rt = GetSubsystem<BlenderRuntime>();
 
     for (ViewRenderer* vr: mSessionRenderers.Values()){
-        if (sessionSettings.renderData){
-            sessionSettings.renderData->SetRenderPathOnViewport(vr->GetViewport(),mCurrentExportpath->GetResourceCache());
-        }
-        //vr->SetRenderPath(sessionSettings.renderData ? ->mRenderPath : "RenderPaths/Forward.xml");
         rt->UpdateViewRenderer(vr);
     }
 }

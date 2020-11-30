@@ -12,7 +12,7 @@ public:
 
     RenderData(Context* ctx);
 
-    void SetRenderPathOnViewport(Viewport* vp,ResourceCache* cache);
+    void SetRenderPathOnViewport(Viewport* vp);
 
     String mRenderPath;
     bool mEnabledGammaCorrection;
@@ -21,4 +21,12 @@ public:
     bool mEnabledSRGB;
     bool mEnabledHDR;
 
+    void Read(RenderData* other){
+        mRenderPath = other->mRenderPath;
+        mEnabledGammaCorrection = other->mEnabledGammaCorrection;
+        mEnabledBloom = other->mEnabledBloom;
+        mEnabledFXAA2 = other->mEnabledFXAA2;
+        mEnabledSRGB = other->mEnabledSRGB;
+        mEnabledHDR = other->mEnabledHDR;
+    }
 };
