@@ -548,6 +548,14 @@ void BlenderRuntime::ProcessDataChange(JSONObject &json)
         UpdateViewRenderer(view);
     }
 
+    if (json.Contains("clip_start")){
+        Camera* viewCam = view->GetCamera();
+        float clip_start = json["clip_start"].GetFloat();
+        float clip_end = json["clip_end"].GetFloat();
+        viewCam->SetNearClip(clip_start);
+        viewCam->SetFarClip(clip_end);
+    }
+
     if (json.Contains("view_matrix")){
         float fov = json["fov"].GetFloat();
 
@@ -572,7 +580,6 @@ void BlenderRuntime::ProcessDataChange(JSONObject &json)
 
         bool isOrthoMode = perspectiveType == "ORTHO";
         view->SetViewData(isOrthoMode,pos,dir,up,view_distance,fov);
-
         UpdateViewRenderer(view);
     }
 }
