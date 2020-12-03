@@ -68,6 +68,10 @@ void Urho3DNodeTreeExporter::ProcessFileSystem()
     textureFiles.Clear();
     cubeTextureFiles.Clear();
     modelFiles.Clear();
+    animationFiles.Clear();
+    particleFiles.Clear();
+    soundFiles.Clear();
+    renderPathFiles.Clear();
 
     for (String resDir : cache->GetResourceDirs()){
         Vector<String> dirFiles;
