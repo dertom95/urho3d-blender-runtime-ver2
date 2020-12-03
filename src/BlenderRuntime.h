@@ -88,6 +88,7 @@ public:
 
     SessionSettings sessionSettings;
     SharedPtr<BlenderExportPath> mCurrentExportpath;
+    void Show();
 private:
     int mSessionId;
     String mCurrentSceneName;
@@ -126,7 +127,7 @@ private:
     HashMap<String,SharedPtr<BlenderExportPath>> mExportPaths;
     HashMap<int,SharedPtr<BlenderSession>> mSessions;
 
-    int mCurrentVisualViewRendererId;
+    int mCurrentVisualSessionIdx;
     Vector<ViewRenderer*> mViewRenderers;
 
     HashMap<Texture2D*, ViewRenderer* > mUpdatedRenderers;

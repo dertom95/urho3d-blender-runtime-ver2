@@ -55,11 +55,8 @@ void ClearSceneSelection()
 void CreateScene()
 {
     // Create a scene only once here
-    
-    editorScene = renderer.viewports[0].get_scene();
-    
     //editorScene = Scene();
-   // editorScene = scene_;
+    editorScene = renderer.viewports[0].get_scene();
 
     // Allow access to the scene from the console
     script.defaultScene = editorScene;

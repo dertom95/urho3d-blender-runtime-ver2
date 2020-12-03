@@ -50,7 +50,12 @@ void BlenderSession::SetExportPath(SharedPtr<BlenderExportPath> exportPath)
     }
 }
 
-
+void BlenderSession::Show(){
+    for (auto viewRenderer : mSessionRenderers){
+        viewRenderer.second_->Show();
+        return;
+    }
+}
 
 SharedPtr<Scene> BlenderSession::SetScene(String sceneName)
 {
@@ -286,7 +291,7 @@ BlenderRuntime::BlenderRuntime(Context *ctx)
     : Object(ctx),
       mJsonfile(ctx),
       mViewRenderers(10),
-      mCurrentVisualViewRendererId(-1),
+      mCurrentVisualSessionIdx(0),
       mSessionCleanUpCheckTimer(0),
       mUpdateTicker(0),
       mSendHello(false)
@@ -602,9 +607,20 @@ void BlenderRuntime::HandleMiscEvent(StringHash eventType, VariantMap &eventData
         using namespace KeyDown;
         int key = eventData[P_KEY].GetInt();
         if (key == KEY_SPACE){
-            if (mViewRenderers.Size() == 0) return;
+            int amountSessions = mSessions.Size();
 
-            mCurrentVisualViewRendererId = ++mCurrentVisualViewRendererId % mViewRenderers.Size();
+            if (amountSessions == 0) return;
+
+            if (mCurrentVisualSessionIdx >= amountSessions){
+                mCurrentVisualSessionIdx=0;
+            }
+
+            int key = mSessions.Keys()[mCurrentVisualSessionIdx];
+
+            auto visSession = mSessions[key];
+
+            visSession->Show();
+            mCurrentVisualSessionIdx++;
         }
     }
 }
@@ -630,10 +646,10 @@ void BlenderRuntime::HandleUpdate(StringHash eventType, VariantMap &eventData)
 
 void BlenderRuntime::UpdateViewRenderer(ViewRenderer *view)
 {
-    Renderer* renderer = GetSubsystem<Renderer>();
-    if (view->GetViewport() != renderer->GetViewport(0)){
-        renderer->SetViewport(0,view->GetViewport());
-    }
+//    Renderer* renderer = GetSubsystem<Renderer>();
+//    if (view->GetViewport() != renderer->GetViewport(0)){
+//        renderer->SetViewport(0,view->GetViewport());
+//    }
 
     mUpdatedRenderers[view->GetRenderTexture()]=view;
 }

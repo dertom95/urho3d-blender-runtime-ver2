@@ -25,6 +25,7 @@
 #include "Scripts/Editor/EditorViewDebugIcons.as"
 #include "Scripts/Editor/EditorViewSelectableOrigins.as"
 #include "Scripts/Editor/EditorViewPaintSelection.as"
+#include "Scripts/Editor/EditorDuplicator.as"
 
 String configFileName;
 
@@ -124,8 +125,8 @@ void ParseArguments()
         }
     }
 
-    //if (!loaded)
-    //    ResetScene();
+//    if (!loaded)
+//        ResetScene();
 }
 
 void HandleUpdate(StringHash eventType, VariantMap& eventData)
@@ -265,6 +266,7 @@ void LoadConfig()
         if (renderingElem.HasAttribute("framelimiter")) engine.maxFps = renderingElem.GetBool("framelimiter") ? 200 : 0;
         if (renderingElem.HasAttribute("gammacorrection")) gammaCorrection = renderingElem.GetBool("gammacorrection");
         if (renderingElem.HasAttribute("hdr")) HDR = renderingElem.GetBool("hdr");
+        if (renderingElem.HasAttribute("srgb")) graphics.sRGB = renderingElem.GetBool("srgb");
     }
 
     if (!uiElem.isNull)
@@ -399,6 +401,7 @@ void SaveConfig()
     renderingElem.SetBool("framelimiter", engine.maxFps > 0);
     renderingElem.SetBool("gammacorrection", gammaCorrection);
     renderingElem.SetBool("hdr", HDR);
+    renderingElem.SetBool("srgb", graphics.sRGB);
 
     uiElem.SetFloat("minopacity", uiMinOpacity);
     uiElem.SetFloat("maxopacity", uiMaxOpacity);

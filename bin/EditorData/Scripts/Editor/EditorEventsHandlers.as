@@ -39,8 +39,6 @@ void EditorSubscribeToEvents()
 
 void EditorMainHandleKeyDown(StringHash eventType, VariantMap& eventData)
 {
-    if (uiHidden) return;
-
     // EditorUI.as handler
     HandleKeyDown(eventType, eventData);
 
@@ -56,8 +54,6 @@ void EditorMainHandleKeyUp(StringHash eventType, VariantMap& eventData)
 
 void EditorMainHandleMouseMove(StringHash eventType, VariantMap& eventData)
 {
-    if (uiHidden) return;
-
     // EditorView.as handler
     ViewMouseMove();
 
@@ -73,7 +69,6 @@ void EditorMainHandleMouseMove(StringHash eventType, VariantMap& eventData)
 
 void EditorMainHandleMouseWheel(StringHash eventType, VariantMap& eventData)
 {
-    if (uiHidden) return;
     // EditorColorWheel.as handler
     HandleColorWheelMouseWheel(eventType, eventData);
 
@@ -85,7 +80,6 @@ void EditorMainHandleMouseWheel(StringHash eventType, VariantMap& eventData)
 
 void EditorMainHandleMouseButtonDown(StringHash eventType, VariantMap& eventData)
 {
-    if (uiHidden) return;
     // EditorColorWheel.as handler
     HandleColorWheelMouseButtonDown(eventType, eventData);
 
@@ -96,22 +90,18 @@ void EditorMainHandleMouseButtonDown(StringHash eventType, VariantMap& eventData
 
 void EditorMainHandleMouseButtonUp(StringHash eventType, VariantMap& eventData)
 {
-    if (uiHidden) return;
     // EditorUI.as handler
     UnfadeUI();
 }
 
 void EditorMainHandlePostRenderUpdate(StringHash eventType, VariantMap& eventData)
 {
-    if (uiHidden) return;
-
     // EditorView.as handler
     HandlePostRenderUpdate();
 } 
 
 void EditorMainHandleUIMouseClick(StringHash eventType, VariantMap& eventData)
 {
-    if (uiHidden) return;
     // EditorView.as handler
     ViewMouseClick();
     HandleOriginToggled(eventType, eventData);
@@ -119,14 +109,12 @@ void EditorMainHandleUIMouseClick(StringHash eventType, VariantMap& eventData)
 
 void EditorMainHandleUIMouseClickEnd(StringHash eventType, VariantMap& eventData)
 {
-    if (uiHidden) return;
     // EditorView.as handler
     ViewMouseClickEnd();
 }
 
 void EditorMainHandleBeginViewUpdate(StringHash eventType, VariantMap& eventData)
 {
-    
     // EditorView.as handler
     HandleBeginViewUpdate(eventType, eventData);
 }
