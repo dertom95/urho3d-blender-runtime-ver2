@@ -178,6 +178,31 @@ void BlenderExportPath::RequestExport()
     mRequestedTreeExport=true;
 }
 
+void BlenderExportPath::SetupSceneInternals(Scene* scene)
+{
+    // set animations to current frame
+    PODVector<AnimatedModel*> animationComponents;
+    scene->GetComponents<AnimatedModel>(animationComponents,true);
+    for (auto animComp : animationComponents){
+        auto node = animComp->GetNode();
+        auto animationVar = node->GetVar("__runtime_animation");
+        if (!animationVar.IsEmpty()){
+            String animationName = animationVar.GetString();
+            float animationTime = node->GetVar("__runtime_animation_time").GetFloat();
+
+            AnimationController* animControl = node->GetComponent<AnimationController>(false);
+            bool animControlPresent = animControl != nullptr;
+            if (!animControlPresent){
+                animControl = node->CreateComponent<AnimationController>();
+            }
+
+            animControl->PlayExclusive(animationName,0,false,0);
+            animControl->SetTime(animationName,animationTime);
+        }
+    }
+
+}
+
 void BlenderExportPath::HandleResourcesChanged(StringHash eventType, VariantMap &eventdata)
 {
     using namespace FileChanged;
@@ -191,6 +216,7 @@ void BlenderExportPath::HandleResourcesChanged(StringHash eventType, VariantMap 
 
             Scene* scene =mScenes[resName];
             scene->LoadXML(*file);
+            SetupSceneInternals(scene);
             scene->Update(0);
 
             using namespace BlenderSceneUpdated;
@@ -245,6 +271,7 @@ SharedPtr<Scene> BlenderExportPath::GetScene(String sceneName)
     SharedPtr<File> file = mResourceCache->GetFile(sceneName);
     //XMLFile* file = mResourceCache->GetResource<XMLFile>(sceneName);
     newScene->LoadXML(*file);
+    SetupSceneInternals(newScene);
     newScene->Update(0);
 
     mScenes[sceneName]=newScene;
@@ -551,6 +578,11 @@ void BlenderRuntime::ProcessDataChange(JSONObject &json)
         float fov = json["fov"].GetFloat();
         view->SetSize(width,height,fov);
         UpdateViewRenderer(view);
+    }
+
+    if (json.Contains("scene_time")){
+        float newTime = json["scene_time"].GetFloat();
+        view->SetSceneTime(newTime);
     }
 
     if (json.Contains("clip_start")){

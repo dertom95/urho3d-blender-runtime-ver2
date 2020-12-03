@@ -30,6 +30,7 @@ public:
     void SetRenderPath(String renderPath) {renderPath_=renderPath;}
     void RequestRender();
     void Show();
+    void SetSceneTime(float f);
     float fov_;
     SharedPtr<BlenderSession> parent;
 

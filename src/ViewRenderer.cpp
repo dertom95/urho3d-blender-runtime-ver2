@@ -69,6 +69,19 @@ void ViewRenderer::SetPerspMode(const Matrix4 &vmat)
     SetViewMatrix(vmat);
 }
 
+void ViewRenderer::SetSceneTime(float time)
+{
+    PODVector<AnimationController*> animControls;
+
+    GetScene()->GetComponents<AnimationController>(animControls,true);
+    for (auto animControl : animControls){
+        for (auto anim : animControl->GetAnimations()){
+            animControl->SetTime(anim.name_,time);
+        }
+    }
+
+}
+
 void ViewRenderer::SetViewData(bool ortho,const Vector3 &pos, const Vector3 &dir, const Vector3 &up, float orthosize, float fov)
 {
     if (ortho){

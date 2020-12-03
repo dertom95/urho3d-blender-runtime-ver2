@@ -58,6 +58,7 @@ private:
     void HandleUpdate(StringHash eventType,VariantMap& eventdata);
 
     void ExportMaterials();
+    void SetupSceneInternals(Scene* scene);
 
     ExportComponentMode mComponentExportMode;
     String mExportPath;

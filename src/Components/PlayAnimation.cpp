@@ -11,6 +11,7 @@ void PlayAnimation::RegisterObject(Context *context)
 
     URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Animation", GetAnimation, SetAnimation, ResourceRef, ResourceRef(Animation::GetTypeStatic()), AM_DEFAULT);
     //URHO3D_ACCESSOR_ATTRIBUTE("animationFile", GetAnimationFile, SetAnimationFile, String, String::EMPTY, AM_DEFAULT);
+    URHO3D_ATTRIBUTE("startFrame", float, startTime, 0, AM_DEFAULT);
     URHO3D_ATTRIBUTE("speed", float, speed, 1.0f, AM_DEFAULT);
 }
 
@@ -45,6 +46,9 @@ void PlayAnimation::DelayedStart()
     animControl->PlayExclusive(animFile,0, true, 0.0f);
     animControl->SetSpeed(animFile,speed);
     animControl->SetAnimationEnabled(true);
+
+    animControl->SetTime(animFile,startTime);
+
 }
 
 ResourceRef PlayAnimation::GetAnimation() const

@@ -19,6 +19,7 @@ public:
 
 private:
     String animationFile;
+    float startTime;
     float speed;
     AnimationController* animControl;
 };
