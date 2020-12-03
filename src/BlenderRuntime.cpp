@@ -216,8 +216,8 @@ void BlenderExportPath::HandleResourcesChanged(StringHash eventType, VariantMap 
 
             Scene* scene =mScenes[resName];
             scene->LoadXML(*file);
-            SetupSceneInternals(scene);
             scene->Update(0);
+            SetupSceneInternals(scene);
 
             using namespace BlenderSceneUpdated;
             VariantMap data;
@@ -271,8 +271,8 @@ SharedPtr<Scene> BlenderExportPath::GetScene(String sceneName)
     SharedPtr<File> file = mResourceCache->GetFile(sceneName);
     //XMLFile* file = mResourceCache->GetResource<XMLFile>(sceneName);
     newScene->LoadXML(*file);
-    SetupSceneInternals(newScene);
     newScene->Update(0);
+    SetupSceneInternals(newScene);
 
     mScenes[sceneName]=newScene;
     newScene->SetName(sceneName);
