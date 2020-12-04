@@ -15,12 +15,12 @@ public:
     void SetGroupFilename(const String& grpInstanceName);
     const String& GetGroupFilename() const  { return groupFilename;}
 
-    const Vector3& GetGroupOffset() const  { return groupOffset;}
-    void SetGroupOffset(const Vector3& groupOffset);
+//    const Vector3& GetGroupOffset() const  { return groupOffset;}
+//    void SetGroupOffset(const Vector3& groupOffset);
 
 private:
     String groupFilename;
     Node* groupRoot;
-    Vector3 groupOffset;
+    //Vector3 groupOffset;
 
 };
