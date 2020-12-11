@@ -181,10 +181,47 @@ void BlenderExportPath::RequestExport()
 void BlenderExportPath::SetupSceneInternals(Scene* scene)
 {
     // set animations to current frame
+
+//    PODVector<Node*> nodes;
+//    scene->GetNodesWithTag(nodes,"__runtime_nodeanim");
+//    for (Node* node : nodes){
+//        Node* addAnimationTo = node;
+//        if (node->HasComponent<AnimatedModel>()){
+//            addAnimationTo = node->GetParent()->CreateChild(node->GetName()+"_anim_parent");
+//            node->SetParent(addAnimationTo);
+//        }
+
+//        auto animationVar = node->GetVar("__runtime_nodeanimation");
+//        if (!animationVar.IsEmpty()){
+//            String animationName = animationVar.GetString();
+//            float animationTime = node->GetVar("__runtime_animation_time").GetFloat();
+
+//            AnimationController* animControl = addAnimationTo->GetOrCreateComponent<AnimationController>();
+
+//            animControl->PlayExclusive(animationName,0,false,0);
+//            auto animations = animControl->GetAnimations();
+
+
+//            animControl->SetTime(animationName,animationTime);
+//        }
+//    }
+
     PODVector<AnimatedModel*> animationComponents;
     scene->GetComponents<AnimatedModel>(animationComponents,true);
     for (auto animComp : animationComponents){
         auto node = animComp->GetNode();
+
+        auto shapekeysVar = node->GetVar("__runtime_shapekeys");
+
+        if (!shapekeysVar.IsEmpty()){
+            for (auto split : shapekeysVar.GetString().Split('|')){
+                Vector<String> shapeKeyValues = split.Split('~');
+                String key = shapeKeyValues[0];
+                float value = ToFloat(shapeKeyValues[1]);
+                animComp->SetMorphWeight(key,value);
+            }
+        }
+
         auto animationVar = node->GetVar("__runtime_animation");
         if (!animationVar.IsEmpty()){
             String animationName = animationVar.GetString();
@@ -197,6 +234,8 @@ void BlenderExportPath::SetupSceneInternals(Scene* scene)
             }
 
             animControl->PlayExclusive(animationName,0,false,0);
+            auto animations = animControl->GetAnimations();
+
             animControl->SetTime(animationName,animationTime);
         }
     }
