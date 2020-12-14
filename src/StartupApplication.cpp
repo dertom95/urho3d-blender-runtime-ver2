@@ -125,6 +125,7 @@ void StartupApplication::SetupComponentExporter()
     exporter->AddComponentHashToFilterList(Zone::GetTypeStatic());
     exporter->AddComponentHashToFilterList(LuaScriptInstance::GetTypeStatic());
     exporter->AddComponentHashToFilterList(AnimationController::GetTypeStatic());
+    exporter->AddComponentHashToFilterList(LookToMoveDirection::GetTypeStatic());
 
     exporter->AddMaterialFolder("Materials");
     exporter->AddTechniqueFolder("Techniques");

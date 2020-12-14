@@ -6,6 +6,7 @@
 #include "RotationFix.h"
 #include "PlayAnimation.h"
 #include "RenderData.h"
+#include "LookToMoveDirection.h"
 
 using namespace Urho3D;
 
@@ -25,6 +26,7 @@ void ComponentsActivator::RegisterComponents(Context *context)
     // custom components
     Rotator::RegisterObject(context);
     PlayAnimation::RegisterObject(context);
+    LookToMoveDirection::RegisterObject(context);
 
    // Rotator2::RegisterObject(context);
 }
