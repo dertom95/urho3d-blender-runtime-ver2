@@ -945,7 +945,6 @@ JSONObject Urho3DNodeTreeExporter::ExportGlobalData(){
     }
     globalData["cubeTextures"] = cubeTextures;
 
-
     JSONArray models;
     for (String modelName : modelFiles){
         StringHash hash(modelName);
@@ -953,6 +952,14 @@ JSONObject Urho3DNodeTreeExporter::ExportGlobalData(){
         NodeAddEnumElement(models,modelName,modelName,"Model "+modelName,"OUTLINER_DATA_MESH",id);
     }
     globalData["models"] = models;
+
+    JSONArray animations;
+    for (String animationName : animationFiles){
+        StringHash hash(animationName);
+        String id(hash.Value() % 10000000);
+        NodeAddEnumElement(animations,animationName,animationName,"Animation "+animationName,"OUTLINER_DATA_MESH",id);
+    }
+    globalData["animations"] = animations;
 
     return globalData;
 }
