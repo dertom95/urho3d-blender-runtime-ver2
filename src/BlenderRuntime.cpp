@@ -128,6 +128,8 @@ BlenderExportPath::BlenderExportPath(Context *ctx, String exportPath, bool creat
     mMaterialExporter->AddSoundFolder("Sounds");
     mMaterialExporter->AddSoundFolder("Nusic");
     mMaterialExporter->AddParticleFolder("Particle");
+    mMaterialExporter->AddSceneFolder("Scenes");
+    mMaterialExporter->AddObjectFolder("Objects");
     mMaterialExporter->SetResourceCache(mResourceCache);
 
     // export materials right aways

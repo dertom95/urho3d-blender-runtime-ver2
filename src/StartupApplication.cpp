@@ -133,6 +133,9 @@ void StartupApplication::SetupComponentExporter()
     exporter->AddModelFolder("Models");
     exporter->AddAnimationFolder("Models");
     exporter->AddRenderPathFolder("RenderPaths");
+    exporter->AddSceneFolder("Scenes");
+    exporter->AddObjectFolder("Objects");
+    exporter->AddSoundFolder("Sounds");
 
 
 }

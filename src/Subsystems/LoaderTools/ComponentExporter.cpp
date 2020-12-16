@@ -202,6 +202,24 @@ void Urho3DNodeTreeExporter::ProcessFileSystem()
                     soundFiles.Push(soundResourceName);
                 }
             }
+
+            for (String path : m_sceneFolders){
+                String dir = resDir+path;
+                fs->ScanDir(dirFiles,dir,"*.xml",SCAN_FILES,true);
+                for (String foundScene : dirFiles){
+                    auto sceneResourceName = path+"/"+foundScene;
+                    sceneFiles.Push(sceneResourceName);
+                }
+            }
+
+            for (String path : m_objectFolders){
+                String dir = resDir+path;
+                fs->ScanDir(dirFiles,dir,"*.xml",SCAN_FILES,true);
+                for (String foundObject : dirFiles){
+                    auto objectResourceName = path+"/"+foundObject;
+                    objectFiles.Push(objectResourceName);
+                }
+            }
         }
 
     }
@@ -213,6 +231,9 @@ void Urho3DNodeTreeExporter::ProcessFileSystem()
     Sort(cubeTextureFiles.Begin(),cubeTextureFiles.End(),CompareTexturePath);
     Sort(modelFiles.Begin(),modelFiles.End(),CompareString);
     Sort(animationFiles.Begin(),animationFiles.End(),CompareString);
+    Sort(soundFiles.Begin(),soundFiles.End(),CompareString);
+    Sort(sceneFiles.Begin(),sceneFiles.End(),CompareString);
+    Sort(objectFiles.Begin(),objectFiles.End(),CompareString);
 
 }
 
@@ -593,6 +614,16 @@ void Urho3DNodeTreeExporter::AddSoundFolder(const String &folder)
     m_soundFolders.Push(folder);
 }
 
+void Urho3DNodeTreeExporter::AddSceneFolder(const String &folder)
+{
+    m_sceneFolders.Push(folder);
+}
+
+void Urho3DNodeTreeExporter::AddObjectFolder(const String &folder)
+{
+    m_objectFolders.Push(folder);
+}
+
 void Urho3DNodeTreeExporter::NodeAddSocket(JSONObject &node, const String &name, NodeSocketType type,bool isInputSocket)
 {
     String socketlistName = isInputSocket ? "inputsockets" : "outputsockets";
@@ -960,6 +991,38 @@ JSONObject Urho3DNodeTreeExporter::ExportGlobalData(){
         NodeAddEnumElement(animations,animationName,animationName,"Animation "+animationName,"OUTLINER_DATA_MESH",id);
     }
     globalData["animations"] = animations;
+
+    JSONArray sounds;
+    for (String name : soundFiles){
+        StringHash hash(name);
+        String id(hash.Value() % 10000000);
+        NodeAddEnumElement(sounds,name,name,"Sound "+name,"OUTLINER_DATA_MESH",id);
+    }
+    globalData["sounds"] = sounds;
+
+    JSONArray scenes;
+    for (String name : sceneFiles){
+        StringHash hash(name);
+        String id(hash.Value() % 10000000);
+        NodeAddEnumElement(scenes,name,name,"Scene "+name,"OUTLINER_DATA_MESH",id);
+    }
+    globalData["scenes"] = scenes;
+
+    JSONArray objects;
+    for (String name : objectFiles){
+        StringHash hash(name);
+        String id(hash.Value() % 10000000);
+        NodeAddEnumElement(objects,name,name,"Object "+name,"OUTLINER_DATA_MESH",id);
+    }
+    globalData["objects"] = objects;
+
+    JSONArray particles;
+    for (String name : particleFiles){
+        StringHash hash(name);
+        String id(hash.Value() % 10000000);
+        NodeAddEnumElement(particles,name,name,"Particle "+name,"OUTLINER_DATA_MESH",id);
+    }
+    globalData["particles"] = particles;
 
     return globalData;
 }
