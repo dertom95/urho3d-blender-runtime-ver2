@@ -164,7 +164,7 @@ void ViewRenderer::HandleSceneUpdate(StringHash eventType, VariantMap &eventdata
     String sceneName = eventdata[P_SCENE_NAME].GetString();
     Scene* scene = eventdata[P_SCENE].GetCustom<Scene*>();
 
-    if (currentScene_ == scene || (currentScene_ && currentScene_->GetName()==sceneName)) {
+    if (currentScene_ && (currentScene_ == scene || currentScene_->GetName()==sceneName)) {
         auto navMesh = currentScene_->GetDerivedComponent<NavigationMesh>(true);
         if (navMesh){
             navMesh->Build();
