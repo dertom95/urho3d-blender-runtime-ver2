@@ -14,7 +14,7 @@ void GroupInstance::RegisterObject(Context *context)
 
 void GroupInstance::SetGroupFilename(const String &groupFilename)
 {
-    if (groupFilename == this->groupFilename) return;
+    if (groupFilename == this->groupFilename || groupFilename=="") return;
 
     this->groupFilename=groupFilename;
 
@@ -22,9 +22,13 @@ void GroupInstance::SetGroupFilename(const String &groupFilename)
 
     ResourceCache* cache = GetSubsystem<ResourceCache>();
     XMLFile* file = cache->GetResource<XMLFile>(groupFilename);
-    groupRoot = node_->CreateChild("group_root");
+
+    Node groupRoot(context_);
     if (file){
-        groupRoot->LoadXML(file->GetRoot());
+        groupRoot.LoadXML(file->GetRoot());
+        for (auto child : groupRoot.GetChildren()){
+            node_->AddChild(child);
+        }
     } else {
         URHO3D_LOGERRORF("Could not load group-instance: %s",groupFilename.CString() );
     }

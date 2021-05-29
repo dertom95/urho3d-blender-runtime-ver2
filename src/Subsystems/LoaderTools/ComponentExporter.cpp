@@ -743,8 +743,9 @@ JSONObject Urho3DNodeTreeExporter::ExportComponents()
                 if (attr.mode_ & AM_NOEDIT)
                     continue; // ignore no-edit attributes
 
-                if (attr.name_.Contains('.'))
+                if (attr.name_.Contains('.') || attr.name_.Contains('=') || attr.name_.Contains('('))
                     continue;
+
 
                 JSONObject prop;
 
