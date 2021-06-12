@@ -108,24 +108,24 @@ void StartupApplication::SetupComponentExporter()
     exporter->SetExportMode(Urho3DNodeTreeExporter::WhiteList);
 
     // include all Components that inherit from LogicComponent
-    exporter->AddSuperComponentHashToFilterList(LogicComponent::GetTypeStatic());
-    // explicitly export those components
-    exporter->AddComponentHashToFilterList(Light::GetTypeStatic());
-    exporter->AddComponentHashToFilterList(Camera::GetTypeStatic());
-    exporter->AddComponentHashToFilterList(RigidBody::GetTypeStatic());
-    exporter->AddComponentHashToFilterList(CollisionShape::GetTypeStatic());
-    exporter->AddComponentHashToFilterList(Navigable::GetTypeStatic());
-    exporter->AddComponentHashToFilterList(NavArea::GetTypeStatic());
-    exporter->AddComponentHashToFilterList(NavigationMesh::GetTypeStatic());
-    exporter->AddComponentHashToFilterList(CrowdAgent::GetTypeStatic());
-    exporter->AddComponentHashToFilterList(Obstacle::GetTypeStatic());
-    exporter->AddComponentHashToFilterList(Octree::GetTypeStatic());
-    exporter->AddComponentHashToFilterList(PhysicsWorld::GetTypeStatic());
-    exporter->AddComponentHashToFilterList(DebugRenderer::GetTypeStatic());
-    exporter->AddComponentHashToFilterList(Zone::GetTypeStatic());
-    exporter->AddComponentHashToFilterList(LuaScriptInstance::GetTypeStatic());
-    exporter->AddComponentHashToFilterList(AnimationController::GetTypeStatic());
-    exporter->AddComponentHashToFilterList(LookToMoveDirection::GetTypeStatic());
+//    exporter->AddSuperComponentHashToFilterList(LogicComponent::GetTypeStatic());
+//    // explicitly export those components
+//    exporter->AddComponentHashToFilterList(Light::GetTypeStatic());
+//    exporter->AddComponentHashToFilterList(Camera::GetTypeStatic());
+//    exporter->AddComponentHashToFilterList(RigidBody::GetTypeStatic());
+//    exporter->AddComponentHashToFilterList(CollisionShape::GetTypeStatic());
+//    exporter->AddComponentHashToFilterList(Navigable::GetTypeStatic());
+//    exporter->AddComponentHashToFilterList(NavArea::GetTypeStatic());
+//    exporter->AddComponentHashToFilterList(NavigationMesh::GetTypeStatic());
+//    exporter->AddComponentHashToFilterList(CrowdAgent::GetTypeStatic());
+//    exporter->AddComponentHashToFilterList(Obstacle::GetTypeStatic());
+//    exporter->AddComponentHashToFilterList(Octree::GetTypeStatic());
+//    exporter->AddComponentHashToFilterList(PhysicsWorld::GetTypeStatic());
+//    exporter->AddComponentHashToFilterList(DebugRenderer::GetTypeStatic());
+//    exporter->AddComponentHashToFilterList(Zone::GetTypeStatic());
+//    exporter->AddComponentHashToFilterList(LuaScriptInstance::GetTypeStatic());
+//    exporter->AddComponentHashToFilterList(AnimationController::GetTypeStatic());
+//    exporter->AddComponentHashToFilterList(LookToMoveDirection::GetTypeStatic());
 
     exporter->AddMaterialFolder("Materials");
     exporter->AddTechniqueFolder("Techniques");

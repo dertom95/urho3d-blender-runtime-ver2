@@ -688,6 +688,7 @@ JSONObject Urho3DNodeTreeExporter::ExportComponents()
     tree["id"]=treeID;
     tree["name"]="Tree "+treeID;
     tree["icon"]="OUTLINER_OB_GROUP_INSTANCE";
+    tree["exposedata_supported"]="true";
 
     JSONArray nodes;
 
