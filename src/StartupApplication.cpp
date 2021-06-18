@@ -4,7 +4,7 @@
 #include <Urho3D/Engine/EngineDefs.h>
 #include <Urho3D/Urho3DAll.h>
 
-#include "Components/ComponentsActivator.h"
+#include <DefaultComponents/ComponentsActivator.h>
 #include "Subsystems/PackageTool.h"
 
 URHO3D_DEFINE_APPLICATION_MAIN(StartupApplication)

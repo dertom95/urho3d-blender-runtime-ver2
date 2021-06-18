@@ -8,7 +8,7 @@
 #include "GameLogic.h"
 
 #ifdef GAME_ENABLE_COMPONENT_EXPORTER
- #include "Subsystems/LoaderTools/ComponentExporter.h"
+ #include <ComponentExporter/ComponentExporter.h>
 #endif
 
 using namespace Urho3D;

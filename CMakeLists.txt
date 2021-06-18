@@ -68,12 +68,20 @@ endif()
 source_group("Source" ${PROJECT_SOURCE_DIR})
 
 # get all source files
-file( GLOB_RECURSE SOURCE_FILES FOLLOW_SYMLINKS ${CMAKE_CURRENT_SOURCE_DIR} src/*.cpp src/*.h src/*.hpp)
+file( GLOB_RECURSE SOURCE_FILES FOLLOW_SYMLINKS ${CMAKE_CURRENT_SOURCE_DIR}
+                src/*.cpp src/*.h src/*.hpp
+                urho3d-addons/DefaultComponents/*.cpp
+                urho3d-addons/ComponentExporter/*.cpp
+                )
 
 # create configure file
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/project_options.h.in ${CMAKE_CURRENT_SOURCE_DIR}/src/Generated/project_options.h @ONLY)
 
-set(INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_SOURCE_DIR}/src/Generated ${CMAKE_CURRENT_SOURCE_DIR}/src/3rd/cppzmq )
+set(INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src
+                 ${CMAKE_CURRENT_SOURCE_DIR}/src/Generated
+                 ${CMAKE_CURRENT_SOURCE_DIR}/src/3rd/cppzmq
+                 ${CMAKE_CURRENT_SOURCE_DIR}/urho3d-addons
+)
 
 list(APPEND ${SOURCE_FILES} ${CMAKE_CURRENT_BINARY_DIR}/project_options.h)
 

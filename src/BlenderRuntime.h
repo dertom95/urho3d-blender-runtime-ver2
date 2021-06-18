@@ -5,11 +5,11 @@
 #include <Urho3D/Scene/Scene.h>
 #include <Urho3D/Graphics/Texture2D.h>
 
-#include "Components/RenderData.h"
+#include <DefaultComponents/RenderData.h>
 
 #include <Urho3D/UI/Window.h>
 
-#include "Subsystems/LoaderTools/ComponentExporter.h"
+#include <ComponentExporter/ComponentExporter.h>
 
 class ViewRenderer;
 

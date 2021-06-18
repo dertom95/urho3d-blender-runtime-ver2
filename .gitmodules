@@ -1,0 +1,3 @@
+[submodule "urho3d-addons"]
+	path = urho3d-addons
+	url = git@github.com:dertom95/urho3d-addons.git
