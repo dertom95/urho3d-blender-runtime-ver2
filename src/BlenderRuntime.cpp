@@ -330,6 +330,12 @@ SharedPtr<Scene> BlenderExportPath::GetScene(String sceneName)
     data[P_SCENE]=MakeCustomValue(newScene);
     SendEvent(E_BLENDER_SCENE_UPDATED,data);
 
+    auto absPath = mResourceCache->GetResourceFileName(sceneName);
+    absPath.Replace(".xml",".urho3d");
+    File binFile(context_,absPath,FILE_WRITE);
+    newScene->Save(binFile);
+    binFile.Close();
+
     return SharedPtr<Scene>(newScene);
 }
 
