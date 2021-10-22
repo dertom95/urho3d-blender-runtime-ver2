@@ -406,7 +406,7 @@ SharedPtr<BlenderExportPath> BlenderRuntime::GetOrCreateExportPath(String path)
         return mExportPaths[path];
     }
 
-    SharedPtr<BlenderExportPath> newPath(new BlenderExportPath(context_,path, mExportPaths.Size()!=0));
+    SharedPtr<BlenderExportPath> newPath(new BlenderExportPath(context_,path, true));
     mExportPaths[path]=newPath;
     return newPath;
 }
