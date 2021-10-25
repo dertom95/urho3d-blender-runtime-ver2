@@ -130,6 +130,8 @@ BlenderExportPath::BlenderExportPath(Context *ctx, String exportPath, bool creat
     mMaterialExporter->AddParticleFolder("Particle");
     mMaterialExporter->AddSceneFolder("Scenes");
     mMaterialExporter->AddObjectFolder("Objects");
+    mMaterialExporter->AddFontFolder("Fonts");
+    mMaterialExporter->AddPostProcessFolder("PostProcess");
     mMaterialExporter->SetResourceCache(mResourceCache);
 
     // export materials right aways
