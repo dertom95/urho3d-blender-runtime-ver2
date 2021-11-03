@@ -407,8 +407,10 @@ SharedPtr<BlenderExportPath> BlenderRuntime::GetOrCreateExportPath(String path)
     if (mExportPaths.Contains(path)){
         return mExportPaths[path];
     }
-
-    SharedPtr<BlenderExportPath> newPath(new BlenderExportPath(context_,path, true));
+    // first export path uses the default resource-cache. This whole resourceCache seperation
+    // is actually not really working. Best to use only on export-path simulatenously
+    bool createNewResourcePath = mExportPaths.Size()!=0;
+    SharedPtr<BlenderExportPath> newPath(new BlenderExportPath(context_,path, createNewResourcePath));
     mExportPaths[path]=newPath;
     return newPath;
 }
