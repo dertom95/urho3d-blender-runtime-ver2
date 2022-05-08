@@ -150,7 +150,7 @@ void BlenderExportPath::SetExportMode(ExportComponentMode mode)
     if (mode == ExportComponentMode::lite){
         mMaterialExporter->SetExportMode(Urho3DNodeTreeExporter::WhiteList);
         // include all Components that inherit from LogicComponent
-        mMaterialExporter->AddSuperComponentHashToFilterList(LogicComponent::GetTypeStatic());
+        // mMaterialExporter->AddSuperComponentHashToFilterList(LogicComponent::GetTypeStatic());
         // explicitly export those components
         mMaterialExporter->AddComponentHashToFilterList(Light::GetTypeStatic());
         mMaterialExporter->AddComponentHashToFilterList(Camera::GetTypeStatic());
